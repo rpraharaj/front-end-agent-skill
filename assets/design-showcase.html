@@ -4,151 +4,417 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Premium UI — Design System Showcase</title>
+<meta name="description" content="Visual gallery of all 10 premium design systems. Pick exactly one per brief. Each supplies palette, type, and spacing rhythm." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  :root { color-scheme: light dark; }
-  * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0f; color: #f7f8fa; }
-  header { padding: 48px 24px 24px; max-width: 1200px; margin: 0 auto; }
-  header h1 { font-size: 2rem; margin: 0 0 8px; letter-spacing: -0.02em; }
-  header p { color: #8a8f98; margin: 0; max-width: 60ch; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 24px auto 64px; padding: 0 24px; }
-  .card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
-  .swatches { display: flex; height: 96px; }
-  .sw { flex: 1; }
-  .meta { padding: 18px; }
-  .meta h2 { margin: 0 0 4px; font-size: 1.05rem; }
-  .meta .tag { font-size: 0.78rem; color: #8a8f98; margin-bottom: 10px; }
-  .meta .font { font-size: 0.8rem; margin: 2px 0; opacity: 0.85; }
-  .meta .best { font-size: 0.78rem; margin-top: 10px; opacity: 0.7; }
+  /* ── Token system: Dark Private-Client (self-demonstrates the default) ── */
+  :root {
+    --color-bg:      #0A0B0E;
+    --color-surface: rgba(255,255,255,0.035);
+    --color-solid:   #141519;
+    --color-line:    rgba(255,255,255,0.08);
+    --color-ink:     #F3F4F6;
+    --color-muted:   #7E828E;
+    --color-accent:  #C9A24B;
+    --font-display:  'Fraunces', Georgia, serif;
+    --font-body:     'Inter', system-ui, sans-serif;
+    --radius-base:   1rem;
+  }
 
-  /* Dark Private-Client */
-  .dpc .s1{background:#0A0B0E}.dpc .s2{background:#141519}.dpc .s3{background:#C9A24B}.dpc .s4{background:#6E8BA8}.dpc .s5{background:#7E828E}
-  /* Minimal-Tech */
-  .mt .s1{background:#0B0B0F}.mt .s2{background:#16161A}.mt .s3{background:#F7F8FA}.mt .s4{background:#5E6AD2}.mt .s5{background:#8A8F98}
-  /* Warm-Sophisticate */
-  .ws .s1{background:#1C1410}.ws .s2{background:#EDE6DD}.ws .s3{background:#C2410C}.ws .s4{background:#B8893B}.ws .s5{background:#F5EFE6}
-  /* Editorial */
-  .ed .s1{background:#FFFFFF}.ed .s2{background:#1A1F36}.ed .s3{background:#635BFF}.ed .s4{background:#425466}.ed .s5{background:#E3E8EE}
-  /* Dark-Luxe */
-  .dl .s1{background:#0A0B0E}.dl .s2{background:#1A1A1D}.dl .s3{background:#D4AF37}.dl .s4{background:#EDEDED}.dl .s5{background:#6B6B70}
-  /* Boutique E-Commerce */
-  .bec .s1{background:#FAF9F6}.bec .s2{background:#111111}.bec .s3{background:#C2410C}.bec .s4{background:#D4AF37}.bec .s5{background:#E5E5E5}
-  /* Neo-Brutalist */
-  .nb .s1{background:#FBFBFA}.nb .s2{background:#000000}.nb .s3{background:#E0D7FF}.nb .s4{background:#E3F9E9}.nb .s5{background:#FFF7D6}
-  /* Conversational AI */
-  .cai .s1{background:#09090B}.cai .s2{background:#18181B}.cai .s3{background:#27272A}.cai .s4{background:#F4F4F5}.cai .s5{background:#06B6D4}
-  /* Organics & Wellness */
-  .ow .s1{background:#E2ECE9}.ow .s2{background:#FAF9F6}.ow .s3{background:#2D312E}.ow .s4{background:#2F5233}.ow .s5{background:#F5E6E8}
-  /* Terminal Hacker */
-  .th .s1{background:#0A0A0A}.th .s2{background:#33FF33}.th .s3{background:#FFB000}.th .s4{background:#555555}.th .s5{background:#1C1C1C}
+  /* ── Global reset ── */
+  *, *::before, *::after { box-sizing: border-box; }
+
+  /* ── Reduced motion guard (non-negotiable) ── */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+    .card-outer:hover { transform: none; box-shadow: 0 0 0 1px rgba(255,255,255,0.1); }
+  }
+
+  /* ── Focus-visible ring ── */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* ── Ambient radial-glow background (demonstrates the pattern) ── */
+  .ambient-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .glow-warm {
+    position: absolute;
+    top: -10%; left: -10%;
+    width: 55%; height: 55%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,162,75,0.08) 0%, transparent 70%);
+    filter: blur(80px);
+  }
+  .glow-cool {
+    position: absolute;
+    bottom: -10%; right: -10%;
+    width: 65%; height: 65%;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(110,139,168,0.05) 0%, transparent 70%);
+    filter: blur(100px);
+  }
+
+  /* ── Content layer ── */
+  .content { position: relative; z-index: 1; }
+
+  /* ── Glassmorphic sticky header (demonstrates the pattern) ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--color-line);
+    background: color-mix(in srgb, var(--color-bg) 60%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+  .header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-inner h1 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    margin: 0;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+  .header-badge {
+    font-size: 0.72rem;
+    color: var(--color-accent);
+    background: rgba(201,162,75,0.12);
+    border: 1px solid rgba(201,162,75,0.25);
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── Page intro ── */
+  .intro {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 48px 24px 8px;
+  }
+  .intro-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+    margin: 0 0 12px;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+  .intro-sub {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    max-width: 60ch;
+    line-height: 1.6;
+    margin: 0;
+    text-wrap: pretty;
+  }
+
+  /* ── Grid ── */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    max-width: 1280px;
+    margin: 32px auto 80px;
+    padding: 0 24px;
+  }
+
+  /* ── Double-bezel card (demonstrates the pattern) ── */
+  .card-outer {
+    padding: 7px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: calc(var(--radius-base) + 7px);
+    overflow: hidden;
+    cursor: default;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+    will-change: transform;
+  }
+  .card-outer:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 48px rgba(0,0,0,0.45), 0 0 0 1px rgba(255,255,255,0.07);
+  }
+  .card-outer[tabindex="0"]:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+  .card-inner {
+    border-radius: var(--radius-base);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.04);
+    box-shadow: inset 0 1px 1.5px rgba(255,255,255,0.04);
+  }
+
+  /* ── Colour swatches ── */
+  .swatches { display: flex; height: 88px; }
+  .sw { flex: 1; }
+
+  /* ── Card meta ── */
+  .meta { padding: 18px 18px 20px; background: var(--color-solid); }
+  .meta-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 3px;
+    color: var(--color-ink);
+    letter-spacing: -0.01em;
+  }
+  .meta-tag { font-size: 0.75rem; color: var(--color-muted); margin-bottom: 10px; }
+  .meta-font { font-size: 0.78rem; color: var(--color-ink); opacity: 0.75; margin: 2px 0; }
+  .meta-best { font-size: 0.75rem; color: var(--color-muted); margin-top: 10px; line-height: 1.5; text-wrap: pretty; }
+  .default-badge {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    background: rgba(201,162,75,0.18);
+    color: var(--color-accent);
+    border: 1px solid rgba(201,162,75,0.3);
+    padding: 1px 6px;
+    border-radius: 999px;
+    vertical-align: middle;
+  }
+
+  /* ── Per-system swatches ── */
+  /* 1. Dark Private-Client */
+  .dpc .s1{background:#0A0B0E} .dpc .s2{background:#141519} .dpc .s3{background:#C9A24B} .dpc .s4{background:#6E8BA8} .dpc .s5{background:#7E828E}
+  /* 2. Minimal-Tech */
+  .mt .s1{background:#0B0B0F} .mt .s2{background:#16161A} .mt .s3{background:#F7F8FA} .mt .s4{background:#5E6AD2} .mt .s5{background:#8A8F98}
+  /* 3. Warm-Sophisticate */
+  .ws .s1{background:#1C1410} .ws .s2{background:#EDE6DD} .ws .s3{background:#C2410C} .ws .s4{background:#B8893B} .ws .s5{background:#F5EFE6}
+  /* 4. Editorial */
+  .ed .s1{background:#FFFFFF} .ed .s2{background:#1A1F36} .ed .s3{background:#635BFF} .ed .s4{background:#425466} .ed .s5{background:#E3E8EE}
+  /* 5. Dark-Luxe */
+  .dl .s1{background:#0A0A0B} .dl .s2{background:#1A1A1D} .dl .s3{background:#D4AF37} .dl .s4{background:#EDEDED} .dl .s5{background:#6B6B70}
+  /* 6. Boutique E-Commerce */
+  .bec .s1{background:#FAF9F6} .bec .s2{background:#111111} .bec .s3{background:#C2410C} .bec .s4{background:#D4AF37} .bec .s5{background:#E5E5E5}
+  /* 7. Neo-Brutalist */
+  .nb .s1{background:#FBFBFA} .nb .s2{background:#000000} .nb .s3{background:#E0D7FF} .nb .s4{background:#E3F9E9} .nb .s5{background:#FFF7D6}
+  /* 8. Conversational AI */
+  .cai .s1{background:#09090B} .cai .s2{background:#18181B} .cai .s3{background:#27272A} .cai .s4{background:#F4F4F5} .cai .s5{background:#06B6D4}
+  /* 9. Organics & Wellness */
+  .ow .s1{background:#E2ECE9} .ow .s2{background:#FAF9F6} .ow .s3{background:#2D312E} .ow .s4{background:#2F5233} .ow .s5{background:#F5E6E8}
+  /* 10. Terminal Hacker */
+  .th .s1{background:#0A0A0A} .th .s2{background:#33FF33} .th .s3{background:#FFB000} .th .s4{background:#555555} .th .s5{background:#1C1C1C}
 </style>
 </head>
 <body>
-<header>
-  <h1>Premium UI — Design System Showcase</h1>
-  <p>Pick exactly ONE system per brief. Each supplies palette + type rhythm so output is cohesive by construction. Full specs in references/design-systems.md.</p>
-</header>
-<main class="grid">
-  <section class="card dpc">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Dark Private-Client ★ default</h2>
-      <div class="tag">Real estate / finance / wealth</div>
-      <div class="font">Display: Fraunces (numbers only)</div>
-      <div class="font">Body: Inter</div>
-      <div class="best">Best for: CRM, finance, luxury — the "premium" default. Near-black + warm bronze dodges all AI-slop looks.</div>
+
+<!-- Ambient background (self-demonstrates the Dark Private-Client glow pattern) -->
+<div class="ambient-bg" aria-hidden="true">
+  <div class="glow-warm"></div>
+  <div class="glow-cool"></div>
+</div>
+
+<div class="content">
+  <!-- Glassmorphic header (self-demonstrates the sticky glass nav pattern) -->
+  <header>
+    <div class="header-inner">
+      <h1>Design System Showcase</h1>
+      <span class="header-badge">10 systems · pick exactly one</span>
     </div>
-  </section>
-  <section class="card mt">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Minimal-Tech</h2>
-      <div class="tag">Linear / Vercel</div>
-      <div class="font">Display: Geist / Inter Tight</div>
-      <div class="font">Body: Inter</div>
-      <div class="best">Best for: SaaS dashboards, dev tools, productivity apps.</div>
-    </div>
-  </section>
-  <section class="card ws">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Warm-Sophisticate</h2>
-      <div class="tag">Arc / Raycast</div>
-      <div class="font">Display: Fraunces / Instrument Serif</div>
-      <div class="font">Body: Inter</div>
-      <div class="best">Best for: consumer apps, lifestyle, creative tools, onboarding.</div>
-    </div>
-  </section>
-  <section class="card ed">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Editorial</h2>
-      <div class="tag">Stripe / Notion</div>
-      <div class="font">Display: General Sans / Camphor</div>
-      <div class="font">Body: Inter</div>
-      <div class="best">Best for: fintech, docs, credibility-forward marketing.</div>
-    </div>
-  </section>
-  <section class="card dl">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Dark-Luxe</h2>
-      <div class="tag">Premium product / portfolio</div>
-      <div class="font">Display: Playfair Display / Cormorant</div>
-      <div class="font">Body: Spline Sans</div>
-      <div class="best">Best for: high-end product pages, portfolios, launches.</div>
-    </div>
-  </section>
-  <section class="card bec">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Boutique E-Commerce</h2>
-      <div class="tag">Luxury storefront / shopping</div>
-      <div class="font">Display: Cormorant Garamond (italicized)</div>
-      <div class="font">Body: Plus Jakarta Sans / Inter</div>
-      <div class="best">Best for: High-end e-commerce, designer collections, jewelry checkouts.</div>
-    </div>
-  </section>
-  <section class="card nb">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Neo-Brutalist</h2>
-      <div class="tag">Indie-Hacker startup / utility</div>
-      <div class="font">Display: Clash Display / Syne</div>
-      <div class="font">Body: Space Grotesk / Plus Jakarta Sans</div>
-      <div class="best">Best for: Creative dashboards, Gumroad-style checkouts, indie projects.</div>
-    </div>
-  </section>
-  <section class="card cai">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Conversational AI Workspace</h2>
-      <div class="tag">Chat / Custom Agents / Canvas</div>
-      <div class="font">Display: Geist Sans / Cabinet Grotesk</div>
-      <div class="font">Body: Geist / Inter</div>
-      <div class="best">Best for: Custom AI workspaces, LLM prompts, sidebars, canvases.</div>
-    </div>
-  </section>
-  <section class="card ow">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Organics & Wellness</h2>
-      <div class="tag">Healthcare / Calm App B2C</div>
-      <div class="font">Display: Outfit / Cabinet Grotesk</div>
-      <div class="font">Body: Inter / Plus Jakarta Sans</div>
-      <div class="best">Best for: Meditation trackers, organic stores, medical dashboards.</div>
-    </div>
-  </section>
-  <section class="card th">
-    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
-    <div class="meta">
-      <h2>Terminal Hacker & Retro</h2>
-      <div class="tag">CLI / Developer command hubs</div>
-      <div class="font">Display: JetBrains Mono / SF Mono</div>
-      <div class="font">Body: Geist Mono</div>
-      <div class="best">Best for: Developer portfolios, CLI logs, hardware metrics, ASCII layouts.</div>
-    </div>
-  </section>
-</main>
+  </header>
+
+  <div class="intro">
+    <p class="intro-title">Pick ONE. Never mix two.</p>
+    <p class="intro-sub">Each system supplies palette + type + spacing rhythm so output is cohesive by construction. Full specs and CSS token blocks in <code>references/design-systems.md</code>. The Dark Private-Client system is the default for any brief described as "premium / modern / sophisticated."</p>
+  </div>
+
+  <main class="grid">
+
+    <!-- 1. Dark Private-Client — DEFAULT -->
+    <section class="card-outer dpc" tabindex="0" aria-label="Dark Private-Client design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Dark Private-Client <span class="default-badge">default</span></p>
+          <p class="meta-tag">Real estate · finance · wealth management</p>
+          <p class="meta-font">Display: Fraunces (numbers only)</p>
+          <p class="meta-font">Body: Inter</p>
+          <p class="meta-best">Near-black canvas + warm bronze dodges all three AI-slop defaults while reading as private-banking software. Use for any "premium / luxury / exclusive" brief.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Minimal-Tech -->
+    <section class="card-outer mt" tabindex="0" aria-label="Minimal-Tech design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Minimal-Tech</p>
+          <p class="meta-tag">Linear · Vercel · dev tools</p>
+          <p class="meta-font">Display: Geist / Inter Tight</p>
+          <p class="meta-font">Body: Inter</p>
+          <p class="meta-best">Tight 4px grid, hairline dividers, generous negative space. Best for SaaS dashboards and developer productivity tools. Add a signature element — plain it reads as generic SaaS.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Warm-Sophisticate -->
+    <section class="card-outer ws" tabindex="0" aria-label="Warm-Sophisticate design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Warm-Sophisticate</p>
+          <p class="meta-tag">Arc · Raycast · consumer apps</p>
+          <p class="meta-font">Display: Fraunces / Instrument Serif</p>
+          <p class="meta-font">Body: Inter</p>
+          <p class="meta-best">Soft large radii (16–24px), layered shadows, tactile and friendly-but-premium. Best for consumer apps, lifestyle, creative tools, and onboarding flows.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Editorial -->
+    <section class="card-outer ed" tabindex="0" aria-label="Editorial design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Editorial</p>
+          <p class="meta-tag">Stripe · Notion · fintech docs</p>
+          <p class="meta-font">Display: General Sans / Söhne</p>
+          <p class="meta-font">Body: Inter</p>
+          <p class="meta-best">Strong typographic hierarchy, ruled sections, precise 8px grid. Data-dense but airy. Best for fintech, documentation, and credibility-forward marketing.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Dark-Luxe -->
+    <section class="card-outer dl" tabindex="0" aria-label="Dark-Luxe design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Dark-Luxe</p>
+          <p class="meta-tag">Premium product · portfolio · agencies</p>
+          <p class="meta-font">Display: Playfair Display / Cormorant</p>
+          <p class="meta-font">Body: Spline Sans</p>
+          <p class="meta-best">High contrast, muted gold accent, cinematic hero. Best for portfolios, luxury product launches, and agency showcase pages.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Boutique E-Commerce -->
+    <section class="card-outer bec" tabindex="0" aria-label="Boutique E-Commerce design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Boutique E-Commerce</p>
+          <p class="meta-tag">Luxury storefront · fashion catalogs</p>
+          <p class="meta-font">Display: Cormorant Garamond (italicised)</p>
+          <p class="meta-font">Body: Plus Jakarta Sans</p>
+          <p class="meta-best">Extreme whitespace, full-aspect zoom-on-hover images, floating slide-over drawers. Best for luxury storefronts, designer collections, and jewellery checkouts.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Neo-Brutalist -->
+    <section class="card-outer nb" tabindex="0" aria-label="Neo-Brutalist design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Neo-Brutalist</p>
+          <p class="meta-tag">Indie-hacker · Figma-style utilities</p>
+          <p class="meta-font">Display: Clash Display / Syne</p>
+          <p class="meta-font">Body: Space Grotesk</p>
+          <p class="meta-best">Sharp 2px solid borders, flat solid black shadow offsets, zero gradients, zero rounded pills. Best for indie hacker startups and bold creative dashboards.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. Conversational AI -->
+    <section class="card-outer cai" tabindex="0" aria-label="Conversational AI Workspace design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Conversational AI Workspace</p>
+          <p class="meta-tag">Chat · custom agents · canvas UIs</p>
+          <p class="meta-font">Display: Geist Sans / Cabinet Grotesk</p>
+          <p class="meta-font">Body: Geist / Inter</p>
+          <p class="meta-best">Centered prompt bars, collapsible sidebars, streaming text blocks, surgical cyan accent. Best for custom LLM workspaces and AI-chat canvases.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Organics & Wellness -->
+    <section class="card-outer ow" tabindex="0" aria-label="Organics and Wellness design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Organics & Wellness</p>
+          <p class="meta-tag">Healthcare · mindfulness · Calm-style B2C</p>
+          <p class="meta-font">Display: Outfit / Cabinet Grotesk</p>
+          <p class="meta-font">Body: Inter / Plus Jakarta Sans</p>
+          <p class="meta-best">Large soft radii (20–32px), deep diffused shadows, soothing overlays, generous whitespace. Best for meditation trackers, organic stores, and medical dashboards.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Terminal Hacker -->
+    <section class="card-outer th" tabindex="0" aria-label="Terminal Hacker design system">
+      <div class="card-inner">
+        <div class="swatches" aria-hidden="true">
+          <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
+        </div>
+        <div class="meta">
+          <p class="meta-name">Terminal Hacker & Retro-Tech</p>
+          <p class="meta-tag">CLI · developer command hubs · ASCII</p>
+          <p class="meta-font">Display: JetBrains Mono / SF Mono</p>
+          <p class="meta-font">Body: Geist Mono</p>
+          <p class="meta-best">Strict monospaced rhythm, ASCII borders, CRT glow text, zero border-radius. Best for developer portfolios, CLI log viewers, and server status monitors.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
 </body>
 </html>

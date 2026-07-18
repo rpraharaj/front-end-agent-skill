@@ -96,3 +96,174 @@ To avoid standard flat gray backgrounds, layer warm and cool radial gradients be
   </div>
 </nav>
 ```
+
+### 4. Hover-Lift Card Animation (with `prefers-reduced-motion` guard)
+Premium feel comes from depth that responds to interaction. The lift + subtle glow on hover signals "this is interactive" without screaming. The `will-change: transform` prevents paint jitter.
+
+```css
+/* In globals.css — define once, reuse everywhere */
+.card-lift {
+  transition: transform 220ms ease, box-shadow 220ms ease;
+  will-change: transform;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(255,255,255,0.06);
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-lift {
+    transition: none;
+  }
+  .card-lift:hover {
+    transform: none;
+    /* Keep the border glow — it's not motion */
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
+  }
+}
+```
+
+```html
+<!-- Usage (Tailwind equivalent) -->
+<div class="card-lift p-2 bg-white/[0.02] border border-white/[0.06] rounded-[24px] cursor-pointer">
+  <!-- card content -->
+</div>
+```
+
+### 5. Skeleton Loading State
+Skeletons signal "content is coming" and prevent jarring blank-white flashes. The shimmer animation uses a moving gradient that respects `prefers-reduced-motion` (degrades to a static pulse).
+
+```html
+<!-- Skeleton card — matches the double-bezel card dimensions -->
+<div class="p-2 bg-white/[0.02] border border-white/[0.06] rounded-[24px] overflow-hidden">
+  <div class="p-6 bg-[#141519]/90 border border-white/[0.04] rounded-[16px] space-y-4">
+    <!-- Avatar skeleton -->
+    <div class="skeleton h-10 w-10 rounded-full"></div>
+    <!-- Title skeleton -->
+    <div class="skeleton h-5 w-3/4 rounded-md"></div>
+    <!-- Body skeletons -->
+    <div class="skeleton h-4 w-full rounded-md"></div>
+    <div class="skeleton h-4 w-5/6 rounded-md"></div>
+  </div>
+</div>
+
+<style>
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(255,255,255,0.04) 25%,
+      rgba(255,255,255,0.08) 50%,
+      rgba(255,255,255,0.04) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s infinite linear;
+  }
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skeleton {
+      animation: none;
+      background: rgba(255,255,255,0.05);
+    }
+  }
+</style>
+```
+
+### 6. Inline SVG Sparkline / Mini-Chart
+Data trust — even a tiny 60×24 sparkline on a KPI card signals "this is real data." No chart library needed. Use `tabular-nums` on the label to prevent column jitter.
+
+```html
+<!-- KPI card with sparkline — Dark Private-Client palette -->
+<div class="card-lift p-2 bg-white/[0.02] border border-white/[0.06] rounded-[24px]">
+  <div class="p-5 bg-[#141519]/90 border border-white/[0.04] rounded-[16px]">
+    <p class="text-[#7E828E] text-xs tracking-wide uppercase mb-1">Revenue MTD</p>
+    <p class="text-[#F3F4F6] text-2xl font-[Fraunces] tabular-nums mb-3">$248,391</p>
+    <!-- Sparkline SVG — replace polyline points with real data coordinates -->
+    <svg viewBox="0 0 120 32" width="120" height="32" aria-hidden="true" style="overflow:visible">
+      <!-- Area fill -->
+      <defs>
+        <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#C9A24B" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#C9A24B" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <polygon
+        points="0,28 12,22 24,24 36,18 48,20 60,14 72,16 84,10 96,12 108,6 120,8 120,32 0,32"
+        fill="url(#sg)"
+      />
+      <!-- Line -->
+      <polyline
+        points="0,28 12,22 24,24 36,18 48,20 60,14 72,16 84,10 96,12 108,6 120,8"
+        fill="none"
+        stroke="#C9A24B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <!-- Terminal dot -->
+      <circle cx="120" cy="8" r="3" fill="#C9A24B"/>
+    </svg>
+    <p class="text-[#5BB98C] text-xs mt-1">↑ 12.4% vs last month</p>
+  </div>
+</div>
+```
+
+**Adapting to real data:** Map your data array to SVG coordinates with:
+```js
+// points: data[], width: 120, height: 32
+function toSparkPoints(data, w, h) {
+  const min = Math.min(...data), max = Math.max(...data);
+  return data.map((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - ((v - min) / (max - min || 1)) * (h - 4) - 2;
+    return `${x.toFixed(1)},${y.toFixed(1)}`;
+  }).join(' ');
+}
+```
+
+### 7. Command-Palette `⌘K` Dialog
+A command palette is a craft signal — it says "power users live here." Even a static demonstration of the pattern lifts the perceived sophistication of any dashboard. Wire it to real search on any key handler.
+
+```html
+<!-- ⌘K overlay: toggle .hidden on the wrapper via JS -->
+<div id="cmd-palette" class="hidden fixed inset-0 z-[100] flex items-start justify-center pt-[18vh]" role="dialog" aria-modal="true" aria-label="Command palette">
+  <!-- Scrim -->
+  <div id="cmd-scrim" class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closePalette()"></div>
+  <!-- Panel -->
+  <div class="relative w-full max-w-xl mx-4 bg-[#141519] border border-white/[0.08] rounded-2xl shadow-2xl overflow-hidden">
+    <!-- Search bar -->
+    <div class="flex items-center gap-3 px-4 py-3 border-b border-white/[0.06]">
+      <svg class="w-4 h-4 text-[#7E828E] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="cmd-input" type="text" placeholder="Search or jump to…" autocomplete="off"
+        class="flex-1 bg-transparent text-[#F3F4F6] placeholder-[#7E828E] text-sm outline-none" />
+      <kbd class="text-[10px] text-[#7E828E] bg-white/[0.06] px-1.5 py-0.5 rounded font-mono">ESC</kbd>
+    </div>
+    <!-- Results list -->
+    <ul class="max-h-72 overflow-y-auto py-2" role="listbox">
+      <li class="px-4 py-2 text-[0.7rem] text-[#7E828E] uppercase tracking-widest">Suggested</li>
+      <li role="option" tabindex="0"
+        class="flex items-center gap-3 px-4 py-2.5 text-sm text-[#C7C9D1] hover:bg-white/[0.05] focus:bg-white/[0.05] rounded-lg mx-1 cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-[#C9A24B]">
+        <svg class="w-4 h-4 text-[#7E828E]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Dashboard
+      </li>
+      <!-- Repeat <li> items for each command -->
+    </ul>
+  </div>
+</div>
+
+<script>
+  // Wire ⌘K / Ctrl+K
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openPalette(); }
+    if (e.key === 'Escape') closePalette();
+  });
+  function openPalette() {
+    document.getElementById('cmd-palette').classList.remove('hidden');
+    setTimeout(() => document.getElementById('cmd-input').focus(), 10);
+  }
+  function closePalette() {
+    document.getElementById('cmd-palette').classList.add('hidden');
+  }
+</script>
+```

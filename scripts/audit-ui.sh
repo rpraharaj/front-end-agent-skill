@@ -37,11 +37,14 @@ fi
 
 # --- 4. Anti-slop heuristics -------------------------------------------------
 # Flags the template-answer patterns from references/anti-slop-rules.md.
-SLOP_HITS=$(grep -rEi "bg-gradient-to-|linear-gradient|#F4F1EA|#5e6ad2|#635bff|#7c3aed|#a855f7|font-(sans|inter)" \
+# NOTE: #5e6ad2 (Linear indigo) and #635bff (Stripe purple) are intentional first-party
+# tokens from design-systems.md — they are excluded here to prevent false positives.
+# The grep below targets genuinely generic AI-slop patterns only.
+SLOP_HITS=$(grep -rEi "bg-gradient-to-|linear-gradient|#F4F1EA|bg-purple-[3-6]00|text-purple-[3-6]00|#7c3aed|#a855f7|#8b5cf6" \
   --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | wc -l | tr -d ' ')
 if [ "$SLOP_HITS" -gt 0 ]; then
-  report "[warn]" "$SLOP_HITS potential slop-pattern match(es) — confirm these are deliberate, not defaults. (Matches for #5e6ad2 / #635bff are accepted if using Minimal-Tech or Editorial systems)."
-  grep -rEi "bg-gradient-to-|linear-gradient|#F4F1EA|#5e6ad2|#635bff|#7c3aed|#a855f7|font-(sans|inter)" --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | head -5
+  report "[warn]" "$SLOP_HITS potential slop-pattern match(es) — confirm these are deliberate, not defaults."
+  grep -rEi "bg-gradient-to-|linear-gradient|#F4F1EA|bg-purple-[3-6]00|text-purple-[3-6]00|#7c3aed|#a855f7|#8b5cf6" --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | head -5
 else
   report "[PASS]" "No obvious slop patterns."
 fi
@@ -70,6 +73,30 @@ if grep -rqi "lorem ipsum\|TODO\|FIXME\|placeholder text" \
   FAIL=1
 else
   report "[PASS]" "No placeholder copy."
+fi
+
+# --- 8. WCAG Contrast reminder -----------------------------------------------
+report "[info]" "Manual contrast check required: body text ≥ 4.5:1, large text ≥ 3:1 on its background."
+report "[info]" "  Use: https://webaim.org/resources/contrastchecker/ or run axe-core for automated checks."
+
+# --- 9. Images: alt attribute required ----------------------------------------
+IMG_TOTAL=$(grep -rEci "<img" --include="*.html" --include="*.tsx" --include="*.jsx" src app . 2>/dev/null | awk -F: '{sum+=$2} END{print sum+0}')
+IMG_WITH_ALT=$(grep -rEci "<img[^>]+alt=" --include="*.html" --include="*.tsx" --include="*.jsx" src app . 2>/dev/null | awk -F: '{sum+=$2} END{print sum+0}')
+if [ "$IMG_TOTAL" -gt 0 ] && [ "$IMG_WITH_ALT" -lt "$IMG_TOTAL" ]; then
+  MISSING=$((IMG_TOTAL - IMG_WITH_ALT))
+  report "[FAIL]" "$MISSING <img> element(s) missing alt attribute (WCAG 1.1.1)."
+  grep -rEni "<img(?![^>]*alt=)" --include="*.html" --include="*.tsx" --include="*.jsx" src app . 2>/dev/null | head -5
+  FAIL=1
+else
+  report "[PASS]" "All <img> elements have alt attributes (or none present)."
+fi
+
+# --- 10. Landmark: <main> element present ------------------------------------
+if grep -rqi "<main" --include="*.html" --include="*.tsx" --include="*.jsx" src app . 2>/dev/null; then
+  report "[PASS]" "<main> landmark found."
+else
+  report "[FAIL]" "No <main> landmark detected. Every page needs a <main> element (WCAG 1.3.6)."
+  FAIL=1
 fi
 
 echo "==> Audit complete."

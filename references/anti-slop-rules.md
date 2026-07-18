@@ -21,6 +21,12 @@ These patterns read as "AI-generated" regardless of subject. Avoid them unless t
 - `prefers-reduced-motion` respected (disable non-essential animation).
 - Accessible color contrast (WCAG AA).
 - Real copy, not lorem ipsum; active voice, sentence case.
+- Semantic HTML landmarks: `<main>`, `<nav>`, `<header>`, `<footer>` — no `<div>` soup.
+- One `<h1>` per page; heading hierarchy not skipped (`<h1>` → `<h2>` → `<h3>`).
+- All `<img>` elements have an `alt` attribute (meaningful text or `alt=""` for decorative).
+- All form inputs have an associated `<label>` or `aria-label`.
+- See `references/a11y-floor.md` for full structural a11y rules and `references/performance-floor.md` for Core Web Vitals / Lighthouse targets.
+
 
 ## Self-critique move
 Before delivering: remove one accessory ("before leaving the house, remove one thing"). If a planned element matches a banned pattern, replace it and write one sentence on why the replacement fits the brief.

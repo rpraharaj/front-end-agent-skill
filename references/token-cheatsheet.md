@@ -42,3 +42,76 @@ Set `--step-*` CSS vars so spacing and type share one rhythm.
 - Body text ≥ 4.5:1 on its background.
 - Large display text ≥ 3:1.
 - Never rely on color alone to convey state (pair with icon/label).
+
+## 7. Responsive breakpoints — plan upfront, not as an afterthought
+Default targets: **375px mobile · 768px tablet · 1280px desktop.** Define the layout shift for each in the worksheet before writing code.
+
+Common layout shifts per breakpoint:
+| Element | Mobile (375px) | Tablet (768px) | Desktop (1280px) |
+|---|---|---|---|
+| Navigation | Bottom tab bar or hamburger | Icon-only sidebar | Full sidebar or top nav |
+| Grid | 1 column | 2 columns | 3–4 columns |
+| Hero type | `clamp(1.75rem, 5vw, 2.5rem)` | `clamp(2rem, 4vw, 3rem)` | `clamp(2.5rem, 3vw, 4rem)` |
+| Padding | 16px horizontal | 24px horizontal | 48px horizontal |
+| Cards | Full-width stacked | 2-up grid | Bento or 3-up |
+| Ambient glows | Hidden (performance) | Optional | Visible |
+
+**CSS pattern (mobile-first):**
+```css
+/* Mobile base styles */
+.grid { grid-template-columns: 1fr; gap: 12px; }
+
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+}
+@media (min-width: 1280px) {
+  .grid { grid-template-columns: repeat(3, 1fr); gap: 20px; }
+}
+```
+
+Rule: if the layout doesn't change between breakpoints, you haven't thought about it — every section should have an explicit rule for what changes at 768px.
+
+## 8. Theme mode — dark-only, light-only, or both
+Decide in Step 1 of the brief. Do not add a theme toggle as an afterthought.
+
+**Default by system:**
+- Dark-only: Dark Private-Client, Dark-Luxe, Terminal Hacker, Conversational AI, Minimal-Tech (dark variant)
+- Light-only: Editorial, Boutique E-Commerce, Organics & Wellness
+- Either/both: Minimal-Tech, Warm-Sophisticate, Neo-Brutalist
+
+**If "both with toggle" is chosen**, define a `:root` block for each mode and wire a `data-theme` toggle:
+```css
+/* Dark (default) */
+:root, :root[data-theme="dark"] {
+  --color-bg:      #0A0B0E;
+  --color-surface: rgba(255,255,255,0.035);
+  --color-ink:     #F3F4F6;
+  --color-muted:   #7E828E;
+  --color-accent:  #C9A24B;
+}
+
+/* Light override */
+:root[data-theme="light"] {
+  --color-bg:      #F4F5F7;
+  --color-surface: rgba(255,255,255,0.85);
+  --color-solid:   #FFFFFF;
+  --color-line:    rgba(0,0,0,0.08);
+  --color-ink:     #111318;
+  --color-muted:   #6B6F7A;
+  --color-accent:  #C9A24B;  /* accent stays the same — it's the brand */
+}
+```
+
+```js
+// Theme toggle (wire to a button)
+function toggleTheme() {
+  const current = document.documentElement.dataset.theme || 'dark';
+  document.documentElement.dataset.theme = current === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', document.documentElement.dataset.theme);
+}
+// Persist across reloads
+document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';
+```
+
+**Contrast check both modes separately** — a UI that passes contrast in dark often fails in light.
+
