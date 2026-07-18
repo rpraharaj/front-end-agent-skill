@@ -47,7 +47,18 @@ if [ -f "src/app/globals.css" ]; then
   --color-mist: #f7f8fa;
   --color-accent: #5e6ad2;
   --color-muted: #8a8f98;
+  --font-display: "Fraunces", serif;
+  --font-body: "Inter", sans-serif;
   --radius-base: 0.75rem;
+}
+@theme {
+  --color-ink: var(--color-ink);
+  --color-surface: var(--color-surface);
+  --color-mist: var(--color-mist);
+  --color-accent: var(--color-accent);
+  --color-muted: var(--color-muted);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }

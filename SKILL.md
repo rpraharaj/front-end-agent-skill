@@ -2,12 +2,11 @@
 name: premium-ui
 description: Use when the user wants to generate, design, or scaffold modern, ultra-premium, sophisticated UIs or web/app screens (landing pages, dashboards, app shells, marketing pages) with an agent. Encodes a brief→design-system→token-plan→anti-slop→build→critique workflow, a bundled library of premium design systems, and explicit anti-"AI-slop" rules so output reads as intentional rather than templated.
 version: 1.2.0
-author: Hermes Agent
+author: Rajesh Praharaj
 license: MIT
 metadata:
-  hermes:
-    tags: [ui, design, frontend, premium, anti-slop, agent-skills, scaffolding]
-    related_skills: [design-taste-frontend, hermes-agent-skill-authoring]
+  tags: [ui, design, frontend, premium, anti-slop, agent-skills, scaffolding]
+  related_skills: [design-taste-frontend]
 ---
 
 # Premium UI Generation
@@ -23,6 +22,11 @@ The core research finding: premium UI skills do **not** say "make it beautiful."
 - **Don't use for:** pure backend/API work, data-only tasks with no visual surface, or when the user explicitly wants a specific stock library's default look (then just install that library, e.g. shadcn/ui, MUI, Ant Design).
 
 ## Workflow (follow in order)
+
+### 0. Mode Selection (Image-First vs. Heuristic Fallback)
+Decide on the execution workflow based on environment tools:
+* **Image-First Mode (Recommended if `generate_image` is active):** Generate a high-end visual reference image of the main UI view first, analyze it to extract exact placement, fonts, and colors, and implement the layout to match the design specification.
+* **Heuristic Spec Fallback (If image generation is unavailable):** Mock using the ASCII wireframe in Step 3. Enforce mathematical proportions (e.g. concentric rounded borders: $R_{\text{inner}} = R_{\text{outer}} - \text{Padding}$) and use predefined Google Font/color configurations to guarantee visual quality.
 
 ### 1. Brief — pin the subject
 If the brief doesn't name the product/subject, audience, and the page's single job, pin it yourself (one concrete subject, its audience, its one job) and state the choice. Use any memory of the user's stated preferences or past designs as a hint. Real content beats lorem ipsum — write copy that serves the brief.

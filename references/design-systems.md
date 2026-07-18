@@ -33,3 +33,46 @@ Pick EXACTLY ONE per brief. Each supplies palette + type + spacing rhythm so out
 - **Best for:** Portfolios, luxury, agencies, launch pages.
 
 > Add new systems here as you curate them. Each entry must be self-contained (palette + type + rhythm + best-for).
+
+## Typography Loaders & Fallback Configuration
+
+To prevent standard system fallbacks from making premium designs look cheap, use these copy-pasteable configurations:
+
+### 1. Next.js App Router Setup (`next/font/google`)
+Load the fonts in your root layout `src/app/layout.tsx` and pass them as CSS variables:
+
+```typescript
+import { Inter, Geist, Geist_Mono, Instrument_Serif, Fraunces, Playfair_Display } from "next/font/google";
+
+// Minimal-Tech Fonts
+export const geistSans = Geist({ subsets: ["latin"], variable: "--font-body" });
+export const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
+
+// Warm-Sophisticate / Dark Private-Client Display
+export const instrumentSerif = Instrument_Serif({ weight: "400", subsets: ["latin"], variable: "--font-display" });
+export const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-display" });
+
+// Dark-Luxe Display
+export const playfairDisplay = Playfair_Display({ subsets: ["latin"], variable: "--font-display" });
+```
+
+### 2. Google Fonts HTML Imports (Vite / Static HTML)
+Include these standard Google Font imports in your `<head>` block:
+
+```html
+<!-- Google Fonts Imports -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+```
+
+### 3. Font Pairings CSS Custom Properties Mapping
+Ensure the display and body variables map correctly in `globals.css`:
+
+```css
+/* Warm-Sophisticate / Private-Client mapping fallback */
+:root {
+  --font-display: 'Instrument Serif', 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+```

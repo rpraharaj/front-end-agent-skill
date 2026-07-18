@@ -11,6 +11,9 @@ These patterns read as "AI-generated" regardless of subject. Avoid them unless t
 6. **Uniform 1rem (or any single) border-radius across all elements.**
 7. **Purple gradient blobs as the only visual interest.**
 8. **Numbered markers (01 / 02 / 03) when content is NOT a true sequence.**
+9. **Standard vertical `100vh` sizing on screen-height components.** That leaves layout-jumping bugs on mobile browsers. Use `100dvh` or `min-h-[100dvh]`.
+10. **Proportional layouts on tabular numbers.** Dashboards and charts look sloppy when numbers dynamically jitter or shift column layouts. Use `tabular-nums` or `font-variant-numeric: tabular-nums` for numeric data.
+11. **Single-word orphans in headings or blocks.** Do not leave single words dangling on their own line. Enforce `text-wrap: balance` (Tailwind `text-balance`) on headlines and `text-wrap: pretty` (Tailwind `text-pretty`) on paragraphs.
 
 ## Required quality floor (non-negotiable)
 - Responsive down to mobile.

@@ -40,13 +40,30 @@ fi
 SLOP_HITS=$(grep -rEi "bg-gradient-to-|linear-gradient|#F4F1EA|#5e6ad2|#635bff|#7c3aed|#a855f7|font-(sans|inter)" \
   --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | wc -l | tr -d ' ')
 if [ "$SLOP_HITS" -gt 0 ]; then
-  report "[warn]" "$SLOP_HITS potential slop-pattern match(es) — confirm these are deliberate, not defaults."
+  report "[warn]" "$SLOP_HITS potential slop-pattern match(es) — confirm these are deliberate, not defaults. (Matches for #5e6ad2 / #635bff are accepted if using Minimal-Tech or Editorial systems)."
   grep -rEi "bg-gradient-to-|linear-gradient|#F4F1EA|#5e6ad2|#635bff|#7c3aed|#a855f7|font-(sans|inter)" --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | head -5
 else
   report "[PASS]" "No obvious slop patterns."
 fi
 
-# --- 5. lorem ipsum / placeholder copy --------------------------------------
+# --- 5. Micro-Layout and Viewports --------------------------------------------
+VH_HITS=$(grep -rEi "\W100vh\W" --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | wc -l | tr -d ' ')
+if [ "$VH_HITS" -gt 0 ]; then
+  report "[warn]" "Found $VH_HITS reference(s) to '100vh'. Consider using '100dvh' or 'min-h-[100dvh]' to prevent mobile layout jumps."
+  grep -rnEi "\W100vh\W" --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | head -3
+else
+  report "[PASS]" "No raw 100vh height triggers detected."
+fi
+
+# --- 6. Typography Orphan Control ---------------------------------------------
+WRAP_HITS=$(grep -rEi "text-balance|text-pretty|text-wrap:\s*(balance|pretty)" --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | wc -l | tr -d ' ')
+if [ "$WRAP_HITS" -gt 0 ]; then
+  report "[PASS]" "Orphan wrap controls found ($WRAP_HITS match(es))."
+else
+  report "[warn]" "No text-balance or text-pretty wrapping wrappers found. Consider balance/pretty to prevent orphaned words."
+fi
+
+# --- 7. lorem ipsum / placeholder copy --------------------------------------
 if grep -rqi "lorem ipsum\|TODO\|FIXME\|placeholder text" \
   --include="*.tsx" --include="*.md" --include="*.html" --include="*.jsx" src app . 2>/dev/null; then
   report "[FAIL]" "Placeholder copy (lorem ipsum / TODO) found — real copy is required."
