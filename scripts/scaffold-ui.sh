@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # scaffold-ui.sh — Premium UI scaffolding for Next.js 16 + React 19 + Tailwind + shadcn/ui
 # Usage: bash scripts/scaffold-ui.sh <project-name> [target-dir]
-# Mirrors the workspace-ai stack (Next 16 / React 19 / Tailwind / Radix-based shadcn,
+# Mirrors a default modern stack (Next 16 / React 19 / Tailwind / Radix-based shadcn,
 # lucide-react icons) so generated UIs drop into an existing repo without stack friction.
 set -euo pipefail
 
@@ -24,7 +24,7 @@ cd "$PROJECT_NAME"
 echo "==> Initializing shadcn/ui..."
 npx --yes shadcn@latest init --yes --defaults
 
-# 3. Install the icon set already used by workspace-ai.
+# 3. Install the standard icon set.
 echo "==> Installing lucide-react..."
 npm install lucide-react
 

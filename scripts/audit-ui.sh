@@ -2,7 +2,7 @@
 # audit-ui.sh — Premium UI quality gate: accessibility + anti-slop heuristics.
 # Usage: bash scripts/audit-ui.sh <project-dir>
 # Runs a quick static check for the non-negotiable premium-UI floor and prints
-# a PASS/FAIL report. Intended to run in CI or after a build (see workspace-ai verify:local).
+# a PASS/FAIL report. Intended to run in CI or after a local build.
 set -uo pipefail
 
 PROJECT_DIR="${1:-.}"
@@ -16,7 +16,7 @@ echo "==> Premium UI audit: $PROJECT_DIR"
 if [ -d "node_modules/@axe-core" ] || npm ls @axe-core/playwright >/dev/null 2>&1; then
   report "[a11y]" "axe-core present — run 'npx playwright test' for full coverage."
 else
-  report "[warn]" "axe-core not detected. workspace-ai uses @axe-core/playwright; add it for automated a11y."
+  report "[warn]" "axe-core not detected. You can install @axe-core/playwright for automated a11y audits."
 fi
 
 # --- 2. Reduced-motion handling ---------------------------------------------

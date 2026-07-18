@@ -32,6 +32,36 @@ Pick EXACTLY ONE per brief. Each supplies palette + type + spacing rhythm so out
 - **Rhythm:** High contrast, thin rules, lots of black, one metallic accent, cinematic hero.
 - **Best for:** Portfolios, luxury, agencies, launch pages.
 
+## 6. Boutique E-Commerce (Luxury fashion / storefront)
+- **Palette:** Ivory `#FAF9F6`, Obsidian `#111111`, Clay `#C2410C` (muted terracotta) or Gold `#D4AF37` used sparingly; Border `#E5E5E5`.
+- **Type:** Display `Cormorant Garamond` (italicized, elegant) / Body `Plus Jakarta Sans` or `Inter`.
+- **Rhythm:** Extreme whitespace, full-aspect zoom-on-hover images, floating slide-over shopping drawers, and thin 1px separators.
+- **Best for:** Luxury storefronts, fashion catalogs, designer merchandise checkouts.
+
+## 7. Neo-Brutalist (Indie-Hacker / Figma-style utility)
+- **Palette:** Bone `#FBFBFA`, Ink `#000000`, Pastels (Lavender `#E0D7FF`, Mint `#E3F9E9`, Butter `#FFF7D6`).
+- **Type:** Display `Clash Display` / `Syne`; Body `Space Grotesk` or `Plus Jakarta Sans`.
+- **Rhythm:** Sharp 2px solid black borders, flat solid black shadow offsets (`shadow-[4px_4px_0px_#000000]`), zero gradients, zero rounded button pills.
+- **Best for:** Indie hacker startups, bold creative utilities, design portfolio indexes.
+
+## 8. Conversational AI Workspace (Chat / Custom Agents)
+- **Palette:** Void `#09090B`, Input `#18181B`, Slate Line `#27272A`, Text `#F4F4F5`, Accent `#3F3F46` or glowing surgical cyan `#06B6D4`.
+- **Type:** Display `Geist Sans` / `Cabinet Grotesk`; Body `Geist` or `Inter`; Mono `Geist Mono`.
+- **Rhythm:** Centered prompt input bars with subtle highlights, responsive collateral sidebars with collapsible drawer links, streaming text blocks, and fluid bubble hover transitions.
+- **Best for:** Conversational bots, custom editor dashboards, AI-chat canvases.
+
+## 9. Organics & Wellness (Apple-esque Light / Calm App style)
+- **Palette:** Sage background `#E2ECE9`, Canvas Bone `#FAF9F6`, Muted Charcoal `#2D312E`, Forest Accent `#2F5233` or Pale Rose `#F5E6E8`.
+- **Type:** Display `Outfit` / `Cabinet Grotesk`; Body `Inter` or `Plus Jakarta Sans`.
+- **Rhythm:** Large soft rounded borders (20-32px), deep diffused low-opacity ambient shadows, soothing color overlays, and highly generous whitespace paddings.
+- **Best for:** Healthcare, mindfulness apps, organic e-commerce, environmental utilities.
+
+## 10. Terminal Hacker & Retro-Tech (Command Line / Developer Docs)
+- **Palette:** Terminal Black `#0A0A0A`, CRT Green `#33FF33` (or Amber `#FFB000`), Muted Grey `#555555`, Dark Border `#1C1C1C`.
+- **Type:** 100% Monospace: `JetBrains Mono` / `SF Mono` / `Geist Mono`.
+- **Rhythm:** Strict monospaced vertical rhythm grids, ascii border decorations, terminal-command prompt symbols, zero rounded corners, glowing text blurs.
+- **Best for:** Hacker command lines, developer document hubs, server status monitors.
+
 > Add new systems here as you curate them. Each entry must be self-contained (palette + type + rhythm + best-for).
 
 ## Typography Loaders & Fallback Configuration
@@ -42,18 +72,22 @@ To prevent standard system fallbacks from making premium designs look cheap, use
 Load the fonts in your root layout `src/app/layout.tsx` and pass them as CSS variables:
 
 ```typescript
-import { Inter, Geist, Geist_Mono, Instrument_Serif, Fraunces, Playfair_Display } from "next/font/google";
+import { Inter, Geist, Geist_Mono, Instrument_Serif, Fraunces, Playfair_Display, Cormorant_Garamond, Plus_Jakarta_Sans, Space_Grotesk, Outfit } from "next/font/google";
 
-// Minimal-Tech Fonts
+// Minimal-Tech / Conversational AI Fonts
 export const geistSans = Geist({ subsets: ["latin"], variable: "--font-body" });
 export const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
-// Warm-Sophisticate / Dark Private-Client Display
+// Display Serifs (Warm-Sophisticate / Dark Private-Client / Luxe / Boutique)
 export const instrumentSerif = Instrument_Serif({ weight: "400", subsets: ["latin"], variable: "--font-display" });
 export const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-display" });
-
-// Dark-Luxe Display
 export const playfairDisplay = Playfair_Display({ subsets: ["latin"], variable: "--font-display" });
+export const cormorantGaramond = Cormorant_Garamond({ weight: "400", subsets: ["latin"], variable: "--font-display" });
+
+// Display Sans & Body Alternates (Organics / Brutalist / Boutique)
+export const plusJakartaSans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-body" });
+export const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-body" });
+export const outfit = Outfit({ subsets: ["latin"], variable: "--font-display" });
 ```
 
 ### 2. Google Fonts HTML Imports (Vite / Static HTML)
@@ -63,16 +97,28 @@ Include these standard Google Font imports in your `<head>` block:
 <!-- Google Fonts Imports -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Space+Grotesk:wght@300..700&family=Outfit:wght@100..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 ```
 
 ### 3. Font Pairings CSS Custom Properties Mapping
 Ensure the display and body variables map correctly in `globals.css`:
 
 ```css
-/* Warm-Sophisticate / Private-Client mapping fallback */
+/* Boutique E-Commerce mapping */
 :root {
-  --font-display: 'Instrument Serif', 'Fraunces', Georgia, serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+}
+
+/* Neo-Brutalist mapping */
+:root {
+  --font-display: 'Clash Display', 'Syne', sans-serif;
+  --font-body: 'Space Grotesk', system-ui, sans-serif;
+}
+
+/* Organics / Wellness mapping */
+:root {
+  --font-display: 'Outfit', sans-serif;
   --font-body: 'Inter', system-ui, sans-serif;
 }
 ```

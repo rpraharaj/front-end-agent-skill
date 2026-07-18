@@ -12,9 +12,9 @@ metadata:
 # Premium UI Generation
 
 ## Overview
-Turns an agent into a design lead that produces *intentional, ultra-premium* interfaces instead of generic "AI-slop." This skill is the synthesis of the best publicly available UI-generation skills — Anthropic's `frontend-design` / `web-artifacts-builder` / `theme-factory`, VoltAgent's `awesome-claude-design`, and `awesome-cursorrules` — distilled into one workflow.
+Turns an agent into a design lead that produces *intentional, ultra-premium* interfaces instead of generic "AI-slop." This skill is the synthesis of the best publicly available UI-generation skills (Anthropic's `frontend-design` / `web-artifacts-builder` / `theme-factory`, VoltAgent's `awesome-claude-design`, and `awesome-cursorrules`) distilled into a structured, highly executable workspace environment.
 
-The core research finding: premium UI skills do **not** say "make it beautiful." They (1) lock a stack, (2) force a *brief → design-system → token plan → self-critique* loop, (3) ship a library of **named design systems + themes**, and (4) include executable scaffolding/audit scripts. This skill does all four. See `references/anatomy-of-top-ui-skills.md` for the source analysis (with live GitHub stats as of July 2026).
+The core rule of premium UI scaffolding is to (1) lock a stack, (2) force a strict *Brief → Design System → Token Plan → Self-Critique* flow, (3) leverage a verified library of named design systems, and (4) run programmatic scaffolding/audit gates.
 
 ## When to Use
 - User asks to build, generate, scaffold, redesign, or "make premium / sophisticated / modern" any UI surface: landing pages, dashboards, app shells, marketing sites, component sets.
@@ -28,10 +28,15 @@ Decide on the execution workflow based on environment tools:
 * **Image-First Mode (Recommended if `generate_image` is active):** Generate a high-end visual reference image of the main UI view first, analyze it to extract exact placement, fonts, and colors, and implement the layout to match the design specification.
 * **Heuristic Spec Fallback (If image generation is unavailable):** Mock using the ASCII wireframe in Step 3. Enforce mathematical proportions (e.g. concentric rounded borders: $R_{\text{inner}} = R_{\text{outer}} - \text{Padding}$) and use predefined Google Font/color configurations to guarantee visual quality.
 
-### 1. Brief — pin the subject
-If the brief doesn't name the product/subject, audience, and the page's single job, pin it yourself (one concrete subject, its audience, its one job) and state the choice. Use any memory of the user's stated preferences or past designs as a hint. Real content beats lorem ipsum — write copy that serves the brief.
+### 1. Interactive Briefing & Intent Check (GATED)
+Before drafting the worksheet or coding, you must verify the user's intent. Ask exactly three clarifying questions, providing a tailored premium recommendation with a design rationale for each:
+1. **Domain & Audience:** Who is this page for, and what is its single goal?
+2. **Visual Aesthetic Direction:** Which of the 10 systems fits (Minimal-Tech, Warm-Sophisticate, Editorial, Dark Private-Client, Dark-Luxe, Boutique E-Commerce, Neo-Brutalist, Conversational AI, Organics, or Terminal Hacker)?
+3. **Signature Element:** What is the core interactive component or motion showcase (e.g. concentric glass dashboard layout, interactive slider deck, smooth prompt input)?
 
-**Done when:** subject + audience + single job are stated in one sentence.
+*Example response:* "For your boutique watch storefront, I recommend the **Boutique E-Commerce** design system. Rationale: High-aspect photography with slide-over drawers and Ogg-style elegant typography conveys high fashion and luxury better than a flat tech look. Do you agree, or do you prefer the Editorial layout?"
+
+**Done when:** The user has reviewed and confirmed/modified your recommended design direction. DO NOT proceed to Step 2 without this confirmation.
 
 ### 2. Pick a design system (don't invent from nothing)
 Choose ONE bundled system from `references/design-systems.md` (Linear/Vercel minimal-tech, Arc/Raycast warm-sophisticate, Stripe/Notion editorial, etc.) OR derive a new one — but **never mix two**. The system supplies palette + type + spacing rhythm so the result is cohesive by construction.
@@ -54,12 +59,12 @@ Against `references/anti-slop-rules.md`: reject cream+serif+terracotta, black+ac
 **Done when:** no planned element is a flagged default; deviations are justified in writing.
 
 ### 5. Build — to the plan, exactly
-Scaffold with the project's existing stack. For `workspace-ai`: Next 16 + React 19 + Tailwind + shadcn/ui + Radix (reuse `lucide-react` already installed). To bootstrap a fresh project run `bash scripts/scaffold-ui.sh <name>` — it emits a Next 16 / React 19 / Tailwind / shadcn app with reduced-motion hooks and a token-CSS-variable stub. Implement only what the token plan specifies; derive every color/type decision from the worksheet. Watch CSS specificity collisions (`.section` vs `.cta` paddings/margins cancel).
+Scaffold with the project's existing stack (e.g., Next 16/15 + React 19/18 + Tailwind + shadcn/ui + Radix). To bootstrap a fresh project run `bash scripts/scaffold-ui.sh <name>` — it emits a Next 16 / React 19 / Tailwind / shadcn app with reduced-motion hooks and a token-CSS-variable stub. Implement only what the token plan specifies; derive every color/type decision from the worksheet. Watch CSS specificity collisions (`.section` vs `.cta` paddings/margins cancel).
 
 **Done when:** UI renders matching the token plan, responsive to mobile, keyboard focus visible, `prefers-reduced-motion` respected.
 
 ### 6. Critique + verify
-Screenshot and self-critique (a picture is worth 1000 tokens). Run `bash scripts/audit-ui.sh <project-dir>` — it checks the premium-UI floor (reduced-motion guard, visible focus, no placeholder copy) and flags slop patterns. For `workspace-ai` also run its axe-core suite (`npm run test:a11y:responsive`). Cut one accessory — "before leaving the house, remove one thing." Fix until green.
+Screenshot and self-critique (a picture is worth 1000 tokens). Run `bash scripts/audit-ui.sh <project-dir>` — it checks the premium-UI floor (reduced-motion guard, visible focus, no placeholder copy) and flags slop patterns. For automated testing, also run your project's axe-core test suite (`npm run test:a11y:responsive` or similar). Cut one accessory — "before leaving the house, remove one thing." Fix until green.
 
 **Done when:** audit-ui.sh reports PASS (or only advisory warnings), a11y checks pass, reduced-motion handled, one decorative element removed.
 
@@ -98,7 +103,7 @@ Present the cohesive, on-brand, accessible UI. **If the brief said "interactive"
 - [ ] One decorative element removed in critique
 
 ## One-Shot Recipes
-- **Greenfield premium landing page:** `bash scripts/scaffold-ui.sh my-app` → pick system → fill `templates/design-brief.md` → map tokens into globals.css → build → `bash scripts/audit-ui.sh my-app` → screenshot → axe (workspace-ai: `npm run test:a11y:responsive`).
+- **Greenfield premium landing page:** `bash scripts/scaffold-ui.sh my-app` → pick system → fill `templates/design-brief.md` → map tokens into globals.css → build → `bash scripts/audit-ui.sh my-app` → screenshot → axe (e.g. `npm run test:a11y:responsive`).
 - **Redesign existing screen:** load current tokens → pick contrasting system → worksheet diff → rebuild signature only.
 
 ## Support Files (this skill)
@@ -106,8 +111,7 @@ Present the cohesive, on-brand, accessible UI. **If the brief said "interactive"
 - `references/design-systems.md` — 5 bundled premium design systems (incl. **Dark Private-Client**, the default for "premium" briefs). Pick exactly one.
 - `references/token-cheatsheet.md` — 60/30/10 color, role-based type, modular scale, radius/elevation, motion, contrast floor.
 - `references/anti-slop-rules.md` — banned patterns + required a11y floor for step 4.
-- `references/anatomy-of-top-ui-skills.md` — research bank: how the best UI skills work + live GitHub stats (July 2026).
 - `references/premium-direction-playbook.md` — **which direction to ship** for "premium" briefs + Dark Private-Client tokens + verified craft signals + how to build a real interactive app. Read before building anything the user calls "premium / modern / sophisticated."
-- `scripts/scaffold-ui.sh` — bootstrap a Next 16 / React 19 / Tailwind / shadcn project matching the workspace-ai stack.
+- `scripts/scaffold-ui.sh` — bootstrap a Next 16 / React 19 / Tailwind / shadcn project matching a standard modern stack.
 - `scripts/audit-ui.sh` — quality gate: reduced-motion, focus-visible, no placeholder copy, slop-pattern flags.
 - `assets/design-showcase.html` — visual gallery of all 5 systems (Dark Private-Client first); open to compare palettes/type before picking.
