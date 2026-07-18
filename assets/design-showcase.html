@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Premium UI — Design System Showcase</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #0b0b0f; color: #f7f8fa; }
+  header { padding: 48px 24px 24px; max-width: 1200px; margin: 0 auto; }
+  header h1 { font-size: 2rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+  header p { color: #8a8f98; margin: 0; max-width: 60ch; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 24px auto 64px; padding: 0 24px; }
+  .card { border-radius: 16px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+  .swatches { display: flex; height: 96px; }
+  .sw { flex: 1; }
+  .meta { padding: 18px; }
+  .meta h2 { margin: 0 0 4px; font-size: 1.05rem; }
+  .meta .tag { font-size: 0.78rem; color: #8a8f98; margin-bottom: 10px; }
+  .meta .font { font-size: 0.8rem; margin: 2px 0; opacity: 0.85; }
+  .meta .best { font-size: 0.78rem; margin-top: 10px; opacity: 0.7; }
+
+  /* Dark Private-Client */
+  .dpc .s1{background:#0A0B0E}.dpc .s2{background:#141519}.dpc .s3{background:#C9A24B}.dpc .s4{background:#6E8BA8}.dpc .s5{background:#7E828E}
+  /* Minimal-Tech */
+  .mt .s1{background:#0B0B0F}.mt .s2{background:#16161A}.mt .s3{background:#F7F8FA}.mt .s4{background:#5E6AD2}.mt .s5{background:#8A8F98}
+  /* Warm-Sophisticate */
+  .ws .s1{background:#1C1410}.ws .s2{background:#EDE6DD}.ws .s3{background:#C2410C}.ws .s4{background:#B8893B}.ws .s5{background:#F5EFE6}
+  /* Editorial */
+  .ed .s1{background:#FFFFFF}.ed .s2{background:#1A1F36}.ed .s3{background:#635BFF}.ed .s4{background:#425466}.ed .s5{background:#E3E8EE}
+  /* Dark-Luxe */
+  .dl .s1{background:#0A0A0B}.dl .s2{background:#1A1A1D}.dl .s3{background:#D4AF37}.dl .s4{background:#EDEDED}.dl .s5{background:#6B6B70}
+</style>
+</head>
+<body>
+<header>
+  <h1>Premium UI — Design System Showcase</h1>
+  <p>Pick exactly ONE system per brief. Each supplies palette + type rhythm so output is cohesive by construction. Full specs in references/design-systems.md.</p>
+</header>
+<main class="grid">
+  <section class="card dpc">
+    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
+    <div class="meta">
+      <h2>Dark Private-Client ★ default</h2>
+      <div class="tag">Real estate / finance / wealth</div>
+      <div class="font">Display: Fraunces (numbers only)</div>
+      <div class="font">Body: Inter</div>
+      <div class="best">Best for: CRM, finance, luxury — the "premium" default. Near-black + warm bronze dodges all AI-slop looks.</div>
+    </div>
+  </section>
+  <section class="card mt">
+    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
+    <div class="meta">
+      <h2>Minimal-Tech</h2>
+      <div class="tag">Linear / Vercel</div>
+      <div class="font">Display: Geist / Inter Tight</div>
+      <div class="font">Body: Inter</div>
+      <div class="best">Best for: SaaS dashboards, dev tools, productivity apps.</div>
+    </div>
+  </section>
+  <section class="card ws">
+    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
+    <div class="meta">
+      <h2>Warm-Sophisticate</h2>
+      <div class="tag">Arc / Raycast</div>
+      <div class="font">Display: Fraunces / Instrument Serif</div>
+      <div class="font">Body: Inter</div>
+      <div class="best">Best for: consumer apps, lifestyle, creative tools, onboarding.</div>
+    </div>
+  </section>
+  <section class="card ed">
+    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
+    <div class="meta">
+      <h2>Editorial</h2>
+      <div class="tag">Stripe / Notion</div>
+      <div class="font">Display: General Sans / Camphor</div>
+      <div class="font">Body: Inter</div>
+      <div class="best">Best for: fintech, docs, credibility-forward marketing.</div>
+    </div>
+  </section>
+  <section class="card dl">
+    <div class="swatches"><div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div></div>
+    <div class="meta">
+      <h2>Dark-Luxe</h2>
+      <div class="tag">Premium product / portfolio</div>
+      <div class="font">Display: Playfair Display / Cormorant</div>
+      <div class="font">Body: Spline Sans</div>
+      <div class="best">Best for: high-end product pages, portfolios, launches.</div>
+    </div>
+  </section>
+</main>
+</body>
+</html>

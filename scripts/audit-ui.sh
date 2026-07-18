@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# audit-ui.sh — Premium UI quality gate: accessibility + anti-slop heuristics.
+# Usage: bash scripts/audit-ui.sh <project-dir>
+# Runs a quick static check for the non-negotiable premium-UI floor and prints
+# a PASS/FAIL report. Intended to run in CI or after a build (see workspace-ai verify:local).
+set -uo pipefail
+
+PROJECT_DIR="${1:-.}"
+cd "$PROJECT_DIR"
+FAIL=0
+report() { printf '%s %s\n' "$1" "$2"; }
+
+echo "==> Premium UI audit: $PROJECT_DIR"
+
+# --- 1. Accessibility: axe-core (if installed) -------------------------------
+if [ -d "node_modules/@axe-core" ] || npm ls @axe-core/playwright >/dev/null 2>&1; then
+  report "[a11y]" "axe-core present — run 'npx playwright test' for full coverage."
+else
+  report "[warn]" "axe-core not detected. workspace-ai uses @axe-core/playwright; add it for automated a11y."
+fi
+
+# --- 2. Reduced-motion handling ---------------------------------------------
+if grep -rq "prefers-reduced-motion" --include="*.css" --include="*.tsx" --include="*.html" --include="*.jsx" src app . 2>/dev/null; then
+  report "[PASS]" "prefers-reduced-motion handled."
+else
+  report "[FAIL]" "No prefers-reduced-motion guard found (required floor)."
+  FAIL=1
+fi
+
+# --- 3. Visible keyboard focus ----------------------------------------------
+if grep -rq "focus-visible" --include="*.css" --include="*.tsx" --include="*.html" --include="*.jsx" src app . 2>/dev/null; then
+  report "[PASS]" "focus-visible styling present."
+else
+  report "[FAIL]" "No focus-visible styling (keyboard focus must be visible)."
+  FAIL=1
+fi
+
+# --- 4. Anti-slop heuristics -------------------------------------------------
+# Flags the template-answer patterns from references/anti-slop-rules.md.
+SLOP_HITS=$(grep -rEi "bg-gradient-to-|linear-gradient|#F4F1EA|#5e6ad2|#635bff|#7c3aed|#a855f7|font-(sans|inter)" \
+  --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | wc -l | tr -d ' ')
+if [ "$SLOP_HITS" -gt 0 ]; then
+  report "[warn]" "$SLOP_HITS potential slop-pattern match(es) — confirm these are deliberate, not defaults."
+  grep -rEi "bg-gradient-to-|linear-gradient|#F4F1EA|#5e6ad2|#635bff|#7c3aed|#a855f7|font-(sans|inter)" --include="*.tsx" --include="*.css" --include="*.html" --include="*.jsx" src app . 2>/dev/null | head -5
+else
+  report "[PASS]" "No obvious slop patterns."
+fi
+
+# --- 5. lorem ipsum / placeholder copy --------------------------------------
+if grep -rqi "lorem ipsum\|TODO\|FIXME\|placeholder text" \
+  --include="*.tsx" --include="*.md" --include="*.html" --include="*.jsx" src app . 2>/dev/null; then
+  report "[FAIL]" "Placeholder copy (lorem ipsum / TODO) found — real copy is required."
+  FAIL=1
+else
+  report "[PASS]" "No placeholder copy."
+fi
+
+echo "==> Audit complete."
+if [ "$FAIL" -ne 0 ]; then
+  echo "Result: FAIL — fix the [FAIL] items above."
+  exit 1
+else
+  echo "Result: PASS (warnings are advisory)."
+fi
