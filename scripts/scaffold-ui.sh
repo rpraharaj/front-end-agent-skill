@@ -36,37 +36,69 @@ npx --yes shadcn@latest add button card dialog input textarea \
   echo "   (some components may already exist or require a TTY; safe to continue)"
 
 # 5. Drop a starter globals.css scaffold that respects reduced-motion and
-#    sets up CSS variables for a token-driven theme (fill from the design worksheet).
+#    sets up CSS variables for a token-driven theme.
+#
+#    Deliberately NEUTRAL: no system's palette or fonts are pre-filled. Shipping
+#    Inter + Linear indigo here would hand every project the banned default look
+#    (anti-slop-rules.md #5) before the design brief is even written. Replace the
+#    monochrome placeholders below with the worksheet's named tokens.
 if [ -f "src/app/globals.css" ]; then
   cat >> "src/app/globals.css" <<'CSS'
 
-/* --- Premium UI: token hooks (populate from templates/design-brief.md) --- */
-:root {
-  --color-ink: #0b0b0f;
-  --color-surface: #16161a;
-  --color-mist: #f7f8fa;
-  --color-accent: #5e6ad2;
-  --color-muted: #8a8f98;
-  --font-display: "Fraunces", serif;
-  --font-body: "Inter", sans-serif;
-  --radius-base: 0.75rem;
-}
+/* --- Premium UI: token hooks -------------------------------------------------
+   Replace every value below from templates/design-brief.md Section 4.
+   These greys are placeholders, NOT a palette — shipping them is a failed build.
+
+   Fonts: load real faces with next/font in src/app/layout.tsx and point
+   --font-display / --font-body at the generated variables. See
+   references/design-systems.md "Typography Loaders". A font-family naming a face
+   that was never loaded silently falls back to system serif/sans.
+--------------------------------------------------------------------------- */
+/* Declare tokens ONCE, here. In Tailwind v4 `@theme` is the token layer: it emits
+   these into :root (so var(--color-ink) works) *and* generates the utilities
+   (text-ink, bg-surface, font-display, rounded-base).
+
+   Do NOT write `:root { --color-ink: … }` plus `@theme { --color-ink: var(--color-ink) }`.
+   That is a self-reference; it survives today only because unlayered CSS outranks
+   @layer theme, and it silently resolves to nothing the moment your :root moves
+   into a cascade layer. Either declare literals here, or use two distinct names
+   (`:root{--ink:…}` + `@theme inline{--color-ink:var(--ink)}`).
+
+   To use a bundled system: copy its block from references/design-systems.md and
+   paste the declarations INSIDE this @theme block (they use the same --color-*
+   names, so it is a straight paste — just swap the `:root {` wrapper for `@theme {`). */
 @theme {
-  --color-ink: var(--color-ink);
-  --color-surface: var(--color-surface);
-  --color-mist: var(--color-mist);
-  --color-accent: var(--color-accent);
-  --color-muted: var(--color-muted);
-  --font-display: var(--font-display);
-  --font-body: var(--font-body);
+  --color-bg: #ffffff;
+  --color-surface: #f4f4f5;
+  --color-solid: #e4e4e7;
+  --color-line: #d4d4d8;
+  --color-ink: #18181b;
+  --color-muted: #71717a;
+  --color-accent: #18181b;
+  --font-display: var(--font-geist-sans), system-ui, sans-serif;
+  --font-body: var(--font-geist-sans), system-ui, sans-serif;
+  --radius-base: 0.5rem;
 }
+
+/* Required a11y floor — do not remove. */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+
+/* Screen-reader-only utility (references/a11y-floor.md §7). */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
 CSS
 fi
 
 echo "==> Done. Next steps:"
 echo "   1. Fill templates/design-brief.md (this skill) for your brief."
-echo "   2. Map worksheet tokens into globals.css CSS variables above."
+echo "   2. Replace the placeholder tokens in src/app/globals.css with the worksheet's"
+echo "      named values, and load the real display/body faces via next/font."
 echo "   3. Build the screen, then run: bash scripts/audit-ui.sh ."
+echo ""
+echo "   The scaffold ships NO palette and NO display font on purpose — those come"
+echo "   from the locked design system, not from this script."

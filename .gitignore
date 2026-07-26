@@ -1,0 +1,11 @@
+# Agent working output — variant images and Playwright screenshots are generated
+# per brief (see references/variant-exploration.md) and should not ship inside
+# the skill package.
+output/
+mock-ups/
+
+# macOS
+.DS_Store
+
+# Node
+node_modules/

@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  /* ── Token system: Dark Private-Client (self-demonstrates the default) ── */
+  /* ── Gallery shell tokens; this shell is not a system recommendation ── */
   :root {
     --color-bg:      #0A0B0E;
     --color-surface: rgba(255,255,255,0.035);
@@ -79,7 +79,7 @@
   /* ── Content layer ── */
   .content { position: relative; z-index: 1; }
 
-  /* ── Glassmorphic sticky header (demonstrates the pattern) ── */
+  /* ── Gallery shell header ── */
   header {
     position: sticky;
     top: 0;
@@ -231,14 +231,14 @@
 </head>
 <body>
 
-<!-- Ambient background (self-demonstrates the Dark Private-Client glow pattern) -->
+<!-- Gallery-only ambient background; not a design-system default -->
 <div class="ambient-bg" aria-hidden="true">
   <div class="glow-warm"></div>
   <div class="glow-cool"></div>
 </div>
 
 <div class="content">
-  <!-- Glassmorphic header (self-demonstrates the sticky glass nav pattern) -->
+  <!-- Gallery header -->
   <header>
     <div class="header-inner">
       <h1>Design System Showcase</h1>
@@ -248,23 +248,23 @@
 
   <div class="intro">
     <p class="intro-title">Pick ONE. Never mix two.</p>
-    <p class="intro-sub">Each system supplies palette + type + spacing rhythm so output is cohesive by construction. Full specs and CSS token blocks in <code>references/design-systems.md</code>. The Dark Private-Client system is the default for any brief described as "premium / modern / sophisticated."</p>
+    <p class="intro-sub">Each system supplies a complete contract for palette, type, structure, surfaces, elevation, and motion. Choose from the product's subject and audience—"premium" is a quality bar, not a visual direction. Full specs live in <code>references/design-systems.md</code>.</p>
   </div>
 
   <main class="grid">
 
-    <!-- 1. Dark Private-Client — DEFAULT -->
+    <!-- 1. Dark Private-Client -->
     <section class="card-outer dpc" tabindex="0" aria-label="Dark Private-Client design system">
       <div class="card-inner">
         <div class="swatches" aria-hidden="true">
           <div class="sw s1"></div><div class="sw s2"></div><div class="sw s3"></div><div class="sw s4"></div><div class="sw s5"></div>
         </div>
         <div class="meta">
-          <p class="meta-name">Dark Private-Client <span class="default-badge">default</span></p>
+          <p class="meta-name">Dark Private-Client</p>
           <p class="meta-tag">Real estate · finance · wealth management</p>
           <p class="meta-font">Display: Fraunces (numbers only)</p>
           <p class="meta-font">Body: Inter</p>
-          <p class="meta-best">Near-black canvas + warm bronze dodges all three AI-slop defaults while reading as private-banking software. Use for any "premium / luxury / exclusive" brief.</p>
+          <p class="meta-best">Near-black canvas + restrained bronze for products built around discretion, exclusivity, and high-value private relationships.</p>
         </div>
       </div>
     </section>

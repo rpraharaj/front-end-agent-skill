@@ -30,13 +30,95 @@ Pick a ratio (1.2 minor-third is safe; 1.25 major-third for more drama) and deri
 - xs 0.75rem · sm 0.875 · base 1 · lg 1.125 · xl 1.25 · 2xl 1.5 · 3xl 1.875 · 4xl 2.25 · 5xl 3rem
 Set `--step-*` CSS vars so spacing and type share one rhythm.
 
+## 3a. Spacing — the scale that separates amateur from professional
+
+**The #1 tell of an unprofessional UI is arbitrary spacing.** 13px here, 18px there, 22px
+somewhere else. Pick one base unit and use only multiples of it — never a value off the scale.
+
+```css
+:root {
+  --space-1: 0.25rem;  /*  4px — icon gaps, inline nudges     */
+  --space-2: 0.5rem;   /*  8px — tight pairs, chip padding    */
+  --space-3: 0.75rem;  /* 12px — control padding              */
+  --space-4: 1rem;     /* 16px — default gap, card padding sm */
+  --space-6: 1.5rem;   /* 24px — card padding, grid gutters   */
+  --space-8: 2rem;     /* 32px — between related blocks       */
+  --space-12: 3rem;    /* 48px — between sections             */
+  --space-16: 4rem;    /* 64px — major section breaks         */
+  --space-24: 6rem;    /* 96px — hero / page rhythm           */
+}
+```
+
+**Base unit by density** (set in Step 1, from the brief's job — not by taste):
+- **Compact** (dense operational tools, tables, trading) → 4px base
+- **Standard** (most apps and dashboards) → 8px base
+- **Spacious** (marketing, portfolio, wellness) → 8px base, but jump two steps between sections
+
+**Proximity law — the rule most builds break:** related things must sit *closer together*
+than unrelated things. A label 16px above its value but 16px from the next card reads as
+one undifferentiated mush. Inside a group use `--space-2`/`--space-3`; between groups use
+`--space-8` or more. If everything is one gap value, you have no hierarchy.
+
 ## 4. Radius & elevation — one decision, applied
 - Radius: choose ONE (e.g. 0.75rem soft, or 0px sharp editorial). Apply everywhere; the "uniform radius" ban means don't mix 4px buttons with 24px cards arbitrarily — be consistent *or* have a stated reason.
+  - Nesting exception: concentric radii. Inner radius = outer radius − padding. A 16px inner in a 24px outer with 8px padding is correct; two equal radii nested look wrong.
 - Elevation: prefer 1px hairline borders (premium, low-noise) over heavy drop shadows. If shadows, use a single soft, low-opacity token.
+
+**Elevation scale — at most three levels.** More than three and nothing reads as elevated.
+
+```css
+:root {
+  --elev-0: none;                                    /* flush — the page surface     */
+  --elev-1: 0 1px 2px rgba(0,0,0,0.06);              /* resting cards, inputs        */
+  --elev-2: 0 8px 24px rgba(0,0,0,0.10);             /* hover, dropdowns, popovers   */
+  --elev-3: 0 24px 64px rgba(0,0,0,0.18);            /* modals, drawers, palette     */
+}
+```
+Dark systems raise opacity and add a hairline ring (`0 0 0 1px rgba(255,255,255,0.06)`) —
+shadow alone is nearly invisible on a near-black canvas. Whether shadows are used *at all*
+is the locked system's decision: Editorial, Boutique and Neo-Brutalist forbid soft elevation.
 
 ## 5. Motion — serve the subject
 - One orchestrated moment (page-load reveal OR scroll-triggered signature) beats scattered effects.
 - Always wrap in `@media (prefers-reduced-motion: reduce)` to disable non-essential motion.
+
+**Commit to duration and easing as tokens** — "subtle motion" in an effects contract is not
+a spec. Undecided timing is why builds feel either sluggish or twitchy.
+
+```css
+:root {
+  --dur-instant: 100ms;  /* state flips: checkbox, toggle, press          */
+  --dur-fast:    180ms;  /* hover, focus ring, color transitions          */
+  --dur-base:    240ms;  /* card lift, dropdown, tab switch               */
+  --dur-slow:    400ms;  /* drawer, modal, page-level reveal              */
+
+  --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);    /* things entering — decelerate */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);   /* things moving between states */
+}
+```
+Rules: entrances decelerate (`--ease-out`); never `linear` on anything spatial; never animate
+`width`/`height`/`top`/`left` — use `transform` and `opacity`; anything over 400ms feels broken
+in a tool (reserve it for deliberate cinematic reveals in Dark-Luxe).
+
+## 9. Interaction-state tokens
+
+Define once, apply to every button, link, row, card, tab and input. Ad-hoc per-component
+states are why a screen feels assembled from different products. Full requirements and the
+non-happy-path data states are in `references/ui-states.md`.
+
+```css
+:root {
+  --state-hover-bg:    color-mix(in srgb, var(--color-ink) 6%, transparent);
+  --state-active-bg:   color-mix(in srgb, var(--color-ink) 10%, transparent);
+  --state-selected-bg: var(--color-accent-soft);
+  --state-disabled-opacity: 0.45;
+  --focus-ring: 2px solid var(--color-accent);
+  --focus-ring-offset: 3px;
+}
+```
+
+Check the focus ring against **every** background it can land on — an accent ring that is
+visible on the canvas can vanish on an accent-tinted selected row.
 
 ## 6. Contrast floor (non-negotiable)
 - Body text ≥ 4.5:1 on its background.
@@ -74,10 +156,14 @@ Rule: if the layout doesn't change between breakpoints, you haven't thought abou
 ## 8. Theme mode — dark-only, light-only, or both
 Decide in Step 1 of the brief. Do not add a theme toggle as an afterthought.
 
-**Default by system:**
-- Dark-only: Dark Private-Client, Dark-Luxe, Terminal Hacker, Conversational AI, Minimal-Tech (dark variant)
+**Default by system** (each system appears exactly once):
+- Dark-only: Dark Private-Client, Dark-Luxe, Terminal Hacker, Conversational AI
 - Light-only: Editorial, Boutique E-Commerce, Organics & Wellness
 - Either/both: Minimal-Tech, Warm-Sophisticate, Neo-Brutalist
+
+Minimal-Tech is listed as either/both deliberately: its Linear/Vercel register works on a
+near-black *or* a near-white canvas. Pick one in Step 1 and commit — "supports both" is a
+decision to build and test two palettes, not a way to defer the choice.
 
 **If "both with toggle" is chosen**, define a `:root` block for each mode and wire a `data-theme` toggle:
 ```css
