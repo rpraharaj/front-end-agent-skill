@@ -1,24 +1,47 @@
 #!/usr/bin/env bash
 # scaffold-html.sh — Single-file premium HTML mockup starter.
-# Usage: bash scripts/scaffold-html.sh <output-name> <system>
+# Usage: bash scripts/scaffold-html.sh <output-name> <system> [slot]
 #
 # system: dark-private-client | minimal-tech | editorial |
 #         warm-sophisticate | dark-luxe | boutique | neo-brutalist |
 #         conversational-ai | organics | terminal
 #
+# slot: top-nav | sidebar | no-nav | scroll | spatial
+#       Aliases: a/b/c/d/e match variant-exploration.md. Default: top-nav.
+#       Pass the slot so three variants are three skeletons, not one card grid.
+#
 # Outputs a self-contained <output-name>.html pre-loaded with:
 #   - Explicitly selected design-system tokens and effects contract
+#   - Slot-specific layout skeleton
 #   - System-specific background, navigation, container, elevation, and motion
 #   - focus-visible ring
 #   - Google Fonts import
 #   - prefers-reduced-motion global guard
 set -euo pipefail
 
-NAME="${1:?Usage: scaffold-html.sh <output-name> <system>}"
-SYSTEM="${2:?Choose a system: dark-private-client | minimal-tech | editorial | warm-sophisticate | dark-luxe | boutique | neo-brutalist | conversational-ai | organics | terminal}"
+USAGE="Usage: scaffold-html.sh <output-name> <system> [slot]
+  system: dark-private-client | minimal-tech | editorial | warm-sophisticate |
+          dark-luxe | boutique | neo-brutalist | conversational-ai | organics | terminal
+  slot:   top-nav | sidebar | no-nav | scroll | spatial   (default: top-nav)"
+
+NAME="${1:?$USAGE}"
+SYSTEM="${2:?$USAGE}"
+SLOT_RAW="${3:-top-nav}"
+SLOT=$(printf '%s' "$SLOT_RAW" | tr '[:upper:]' '[:lower:]')
+case "$SLOT" in
+  top-nav|top|a) SLOT=top-nav ;;
+  sidebar|left|rail|b) SLOT=sidebar ;;
+  no-nav|command|none|c) SLOT=no-nav ;;
+  scroll|continuous|d) SLOT=scroll ;;
+  spatial|canvas|e) SLOT=spatial ;;
+  *)
+    echo "Unknown slot: $SLOT_RAW" >&2
+    echo "$USAGE" >&2
+    exit 2 ;;
+esac
 OUTPUT="${NAME}.html"
 
-echo "==> Scaffolding premium HTML mockup: $OUTPUT (system: $SYSTEM)"
+echo "==> Scaffolding premium HTML mockup: $OUTPUT (system: $SYSTEM, slot: $SLOT)"
 
 # ── Pick tokens per system ──────────────────────────────────────────────────
 case "$SYSTEM" in
@@ -191,6 +214,225 @@ case "$SYSTEM" in
     PANEL_BORDER="1px solid var(--color-accent)"
     PANEL_HOVER="none"
     BUTTON_INK="#0A0A0A" ;;
+esac
+
+# ── Slot skeleton (structure). System case above owns paint. ───────────────
+LAYOUT_CSS=""
+case "$SLOT" in
+  sidebar)
+    LAYOUT_CSS='
+  .app { display: grid; min-height: 100dvh; }
+  .rail {
+    border-bottom: 1px solid var(--color-line);
+    background: var(--color-bg);
+    padding: 16px;
+  }
+  .rail .nav-links { flex-direction: column; gap: 8px; }
+  .workspace main { max-width: none; }
+  @media (min-width: 768px) {
+    .app { grid-template-columns: 220px minmax(0, 1fr); }
+    .rail {
+      position: sticky; top: 0; height: 100dvh;
+      border-bottom: 0; border-right: 1px solid var(--color-line);
+      padding: 24px 16px;
+    }
+    .workspace { min-width: 0; }
+  }
+  .split { display: grid; gap: 24px; }
+  @media (min-width: 1280px) {
+    .split { grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr); }
+  }
+  .row-list { list-style: none; margin: 0; padding: 0; }
+  .row-list li { border-top: 1px solid var(--color-line); padding: 12px 0; }
+'
+    ;;
+  no-nav)
+    LAYOUT_CSS='
+  .command {
+    max-width: 720px; margin: 0 auto; padding: 20vh 16px 48px;
+  }
+  .command input[type="search"] {
+    width: 100%; min-height: 48px; padding: 12px 16px;
+    border: 1px solid var(--color-line); border-radius: var(--radius-base);
+    background: var(--color-surface); color: var(--color-ink);
+    font: inherit;
+  }
+  .results { list-style: none; margin: 24px 0 0; padding: 0; }
+  .results li { border-top: 1px solid var(--color-line); padding: 12px 0; }
+'
+    ;;
+  scroll)
+    LAYOUT_CSS='
+  main section { max-width: 72ch; }
+  .band {
+    border-top: 1px solid var(--color-line);
+    padding-top: 32px;
+  }
+'
+    ;;
+  spatial)
+    LAYOUT_CSS='
+  .orbit { display: grid; gap: 16px; }
+  @media (min-width: 768px) {
+    .orbit { grid-template-columns: minmax(0, 1fr) 16rem; align-items: start; }
+  }
+  .canvas {
+    min-height: 60dvh;
+    border: 1px solid var(--color-line);
+    background: var(--color-surface);
+    padding: 24px;
+  }
+'
+    ;;
+  top-nav)
+    LAYOUT_CSS='
+  .lead { display: grid; gap: 24px; }
+  @media (min-width: 768px) {
+    .lead { grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr); }
+  }
+  .row-list { list-style: none; margin: 0; padding: 0; }
+  .row-list li { border-top: 1px solid var(--color-line); padding: 12px 0; }
+'
+    ;;
+esac
+
+TOP_NAV_HEADER="<header>
+  <nav aria-label=\"Main\">
+    <div class=\"nav-inner\">
+      <a href=\"#main-content\" class=\"nav-logo\">${NAME}</a>
+      <ul class=\"nav-links\">
+        <li><a href=\"#overview\">Overview</a></li>
+        <li><a href=\"#activity\">Activity</a></li>
+      </ul>
+      <button class=\"btn\" type=\"button\">Primary action</button>
+    </div>
+  </nav>
+</header>"
+
+case "$SLOT" in
+  sidebar)
+    LAYOUT_HTML="<div class=\"app\">
+  <header class=\"rail\">
+    <nav aria-label=\"Main\">
+      <a href=\"#main-content\" class=\"nav-logo\">${NAME}</a>
+      <ul class=\"nav-links\">
+        <li><a href=\"#overview\">Overview</a></li>
+        <li><a href=\"#activity\">Context</a></li>
+      </ul>
+    </nav>
+  </header>
+  <div class=\"workspace content\">
+    <main id=\"main-content\">
+      <h1>Your headline here</h1>
+      <p class=\"subtitle\">Replace with the page job in one sentence. The list below is the product — not a KPI row.</p>
+      <div class=\"split\">
+        <section id=\"overview\" aria-labelledby=\"overview-heading\">
+          <h2 id=\"overview-heading\">Next actions</h2>
+          <ul class=\"row-list\">
+            <li>Replace this row with a real next action and a real name.</li>
+            <li>Replace this row with the second action.</li>
+            <li>Replace this row with the third action.</li>
+          </ul>
+        </section>
+        <aside id=\"activity\" aria-labelledby=\"activity-heading\">
+          <h2 id=\"activity-heading\">Context</h2>
+          <p class=\"subtitle\">Selected person or record stays here.</p>
+        </aside>
+      </div>
+    </main>
+    <footer><p class=\"subtitle\" style=\"padding:24px;\">${NAME}</p></footer>
+  </div>
+</div>"
+    ;;
+  no-nav)
+    LAYOUT_HTML="<div class=\"content\">
+  <header>
+    <nav aria-label=\"Main\" style=\"max-width:720px;margin:0 auto;padding:16px;\">
+      <a href=\"#main-content\" class=\"nav-logo\">${NAME}</a>
+    </nav>
+  </header>
+  <main id=\"main-content\" class=\"command\">
+    <h1>Your headline here</h1>
+    <p class=\"subtitle\">Command-first. The input is the product. Persistent sidebar is not.</p>
+    <form role=\"search\" action=\"#\" method=\"get\">
+      <label class=\"label\" for=\"cmd\">Jump to a person, record, or action</label>
+      <input id=\"cmd\" type=\"search\" name=\"q\" placeholder=\"Replace this placeholder with a real query hint\" />
+    </form>
+    <h2 id=\"activity-heading\">Results</h2>
+    <ul class=\"results\" id=\"activity\">
+      <li>Replace this result with a real match.</li>
+      <li>Replace this result with a second match.</li>
+    </ul>
+  </main>
+  <footer><p class=\"subtitle\" style=\"max-width:720px;margin:0 auto;padding:24px 16px;\">${NAME}</p></footer>
+</div>"
+    ;;
+  scroll)
+    LAYOUT_HTML="${TOP_NAV_HEADER}
+<div class=\"content\">
+  <main id=\"main-content\">
+    <h1>Your headline here</h1>
+    <p class=\"subtitle\">One continuous reading surface. Hierarchy comes from type and spacing, not cards.</p>
+    <section id=\"overview\" class=\"band\" aria-labelledby=\"overview-heading\">
+      <h2 id=\"overview-heading\">First band</h2>
+      <p class=\"subtitle\">Replace with the first real section. No metric tiles.</p>
+    </section>
+    <section id=\"activity\" class=\"band\" aria-labelledby=\"activity-heading\">
+      <h2 id=\"activity-heading\">Second band</h2>
+      <p class=\"subtitle\">Replace with the second real section.</p>
+    </section>
+    <section id=\"settings\" class=\"band\" aria-labelledby=\"settings-heading\">
+      <h2 id=\"settings-heading\">Third band</h2>
+      <p class=\"subtitle\">Replace with the third real section.</p>
+    </section>
+  </main>
+</div>
+<footer class=\"content\"><p class=\"subtitle\" style=\"max-width:1200px;margin:0 auto;padding:24px;\">${NAME}</p></footer>"
+    ;;
+  spatial)
+    LAYOUT_HTML="${TOP_NAV_HEADER}
+<div class=\"content\">
+  <main id=\"main-content\">
+    <h1>Your headline here</h1>
+    <p class=\"subtitle\">Use this slot only when the job <em>is</em> a map, chart, or timeline. A queue does not belong here.</p>
+    <div class=\"orbit\">
+      <figure id=\"overview\" class=\"canvas\">
+        <figcaption class=\"label\">Dominant visualization</figcaption>
+        <p>Replace this region with the real map, chart, or timeline from the brief. Do not draw a node graph of a to-do list.</p>
+      </figure>
+      <aside id=\"activity\">
+        <h2>Controls</h2>
+        <p class=\"subtitle\">Filters and a selected-object inspector orbit the visualization.</p>
+      </aside>
+    </div>
+  </main>
+</div>
+<footer class=\"content\"><p class=\"subtitle\" style=\"max-width:1200px;margin:0 auto;padding:24px;\">${NAME}</p></footer>"
+    ;;
+  top-nav)
+    LAYOUT_HTML="${TOP_NAV_HEADER}
+<div class=\"content\">
+  <main id=\"main-content\">
+    <h1>Your headline here</h1>
+    <p class=\"subtitle\">A clear, one-sentence description of what this page does and who it serves. Sentence case, active voice.</p>
+    <div class=\"lead\">
+      <section id=\"overview\" aria-labelledby=\"overview-heading\">
+        <h2 id=\"overview-heading\">Primary list</h2>
+        <ul class=\"row-list\">
+          <li>Replace this row with the thing they came for.</li>
+          <li>Replace this row with the second item.</li>
+          <li>Replace this row with the third item.</li>
+        </ul>
+      </section>
+      <aside id=\"activity\" aria-labelledby=\"activity-heading\">
+        <h2 id=\"activity-heading\">Secondary</h2>
+        <p class=\"subtitle\">Context, not a third equal metric card.</p>
+      </aside>
+    </div>
+  </main>
+</div>
+<footer class=\"content\"><p class=\"subtitle\" style=\"max-width:1200px;margin:0 auto;padding:24px;\">${NAME}</p></footer>"
+    ;;
 esac
 
 # ── Write the file ──────────────────────────────────────────────────────────
@@ -397,86 +639,19 @@ cat > "$OUTPUT" << HTMLEOF
     transition: opacity 180ms ease, transform 180ms ease;
   }
   .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+  /* ── Slot skeleton ── */
+  ${LAYOUT_CSS}
 </style>
 </head>
-<body>
+<body class="slot-${SLOT}">
 
 <a class="skip-link" href="#main-content">Skip to main content</a>
 
 <!-- This remains empty unless the selected system explicitly defines ambient treatment. -->
 ${AMBIENT_HTML}
 
-<header>
-  <nav aria-label="Main">
-    <div class="nav-inner">
-      <a href="#main-content" class="nav-logo">${NAME}</a>
-      <ul class="nav-links">
-        <li><a href="#overview">Overview</a></li>
-        <li><a href="#activity">Activity</a></li>
-        <li><a href="#settings">Settings</a></li>
-      </ul>
-      <button class="btn" type="button">Primary action</button>
-    </div>
-  </nav>
-</header>
-
-<!-- Main content -->
-<div class="content">
-  <main id="main-content">
-    <!-- Hero -->
-    <h1>Your headline here</h1>
-    <p class="subtitle">A clear, one-sentence description of what this page does and who it serves. Sentence case, active voice.</p>
-
-    <!-- Generic content groups; the selected system controls their visual treatment.
-         Each nav target is a real <section> with its own <h2> — h1 → h2 hierarchy,
-         no skipped levels, and every anchor resolves to a landmark, not a card. -->
-    <section id="overview" aria-labelledby="overview-heading">
-      <h2 id="overview-heading">Overview</h2>
-      <div class="content-grid">
-        <article class="panel">
-          <div class="panel-inner">
-            <p class="label">Metric one</p>
-            <p class="metric">—</p>
-          </div>
-        </article>
-        <article class="panel">
-          <div class="panel-inner">
-            <p class="label">Metric two</p>
-            <p class="metric">—</p>
-          </div>
-        </article>
-        <article class="panel">
-          <div class="panel-inner">
-            <p class="label">Metric three</p>
-            <p class="metric">—</p>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section id="activity" aria-labelledby="activity-heading">
-      <h2 id="activity-heading">Activity</h2>
-      <article class="panel">
-        <div class="panel-inner">
-          <p class="subtitle">Replace with the real activity content for this brief.</p>
-        </div>
-      </article>
-    </section>
-
-    <section id="settings" aria-labelledby="settings-heading">
-      <h2 id="settings-heading">Settings</h2>
-      <article class="panel">
-        <div class="panel-inner">
-          <p class="subtitle">Replace with the real settings content for this brief.</p>
-        </div>
-      </article>
-    </section>
-  </main>
-</div>
-
-<footer class="content">
-  <p class="subtitle" style="max-width:1200px;margin:0 auto;padding:24px;">${NAME}</p>
-</footer>
+${LAYOUT_HTML}
 
 </body>
 </html>
@@ -484,10 +659,11 @@ HTMLEOF
 
 echo "==> Done: $OUTPUT"
 echo "   Design system: $SYSTEM"
+echo "   Slot:          $SLOT"
 echo "   Fonts loaded:  $FONTS_URL"
 echo ""
 echo "   This file FAILS audit-ui.sh on purpose until you replace the stub copy"
-echo "   ('Your headline here', 'Metric one/two/three'). That is the gate working —"
+echo "   ('Your headline here'). That is the gate working —"
 echo "   a scaffold is a starting point, not a deliverable."
 echo ""
 echo "   Next: fill the content from your design-brief.md worksheet."

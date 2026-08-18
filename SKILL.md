@@ -27,56 +27,71 @@ Pick the path that matches the request. Announce the chosen route in one line, t
 
 | Route | Use when | Process |
 |---|---|---|
-| **A — Full pipeline** | New product surface, greenfield screen, substantial redesign, "make it premium", any work that sets the visual direction | Steps 1–8, all five checkpoints |
-| **B — Light path** | Adding a section/component to an existing screen, or a contained change inside an already-locked system | Skip Steps 0–2. Name the existing system and its effects contract, fill Worksheet §4 (tokens) + §5 (anti-slop) only, build, audit. One checkpoint: the worksheet. |
-| **C — Direct** | Bug fix, copy edit, spacing/a11y fix, refactor, wiring an existing component to data | No worksheet, no checkpoints. Build to the system already in the codebase, then run `scripts/audit-ui.sh`. |
+| **A — Full pipeline** | New product surface, greenfield screen, substantial redesign, "make it premium", any work that sets the visual direction | Steps 0–8, two gates |
+| **B — Light path** | Adding a section/component to an existing screen, or a contained change inside an already-locked system | Skip Steps 0–2. Name the existing system and its effects contract, fill Worksheet §4 (tokens) + §5 (anti-slop) only, post the lock summary, build, audit. |
+| **C — Direct** | Bug fix, copy edit, spacing/a11y fix, refactor, wiring an existing component to data | No worksheet, no gates. Build to the system already in the codebase, then run `scripts/audit-ui.sh`. |
 
 If a Route C task turns out to need a new visual direction, stop and escalate to Route A — say so, don't silently redesign. If you cannot tell B from C, ask; do not default to A for small work.
 
+On Route A, name the **surface** in the same line as the route: **product** (app, dashboard, queue) or **marketing** (landing, portfolio). Read `references/surface-types.md`. They do not share a variant set. A redesign of an existing product is `references/redesign.md`, not "pick the opposite system."
+
 ## Rule #0 (applies to Route A and B)
-> **On Routes A and B, never write UI code until that route's required worksheet sections are complete and confirmed in this thread.** The selected variant and token plan are prerequisites, not formalities. Agents that skip to code produce template output — the exact failure this skill exists to prevent.
+
+Route A has **two gates**. Nothing else waits for "proceed."
+
+| Gate | When | Wait for | Then |
+|---|---|---|---|
+| **1 — Intent** | After the briefing questions | User confirms inventory, constraints, and what is fixed vs explorable | Produce variants |
+| **2 — Direction** | After variants are shown | User selects one (or a skip reason + one recommended direction) | Lock that variant's system, write the worksheet to disk, post a short lock summary, and build |
+
+> **Do not write the production app until Gate 2 is done.** HTML-mode variant files in Step 2 are exploration artifacts, not a skipped gate. Agents that skip to an app produce template output — the failure this skill exists to prevent.
 >
-> Rule #0 does not apply to Route C. Gating a spacing fix behind five checkpoints is its own failure mode: the skill gets bypassed entirely and every rule in it stops applying.
+> After Gate 2, do **not** wait for more "proceed" messages before the token plan, anti-slop check, or build. The selection *is* authorization to lock that direction and implement it.
+>
+> Rule #0 does not apply to Route C. Extra gates are why skills get bypassed.
+
+**Lock summary (post this, not the full worksheet):** selected direction name · system · one-sentence rationale · 4–6 named hex tokens · type pairing · spacing base · signature · anti-slop deviations. Write the completed `templates/design-brief.md` copy to disk.
 
 ## Workflow (Route A — follow in order)
 
+Variant rules, slot fit, contrast matrix, and the stop gate live in `references/variant-exploration.md`. Follow that file. Do not invent a second procedure here.
+
 ### 0. Mode Selection (how variants get produced)
-Pick the exploration mode from the tools you actually have. Read `references/variant-exploration.md` → "Two modes."
+Pick the mode from the tools you actually have. Read `references/variant-exploration.md` → "Two modes."
 
-* **HTML Mode (preferred whenever a browser/screenshot tool is available):** Build 3–5 real single-file HTML variants with `scripts/scaffold-html.sh`, screenshot each, and present the screenshots. **The selected variant is then the starting build** — no rebuild, no fidelity gap. This is the default because the biggest quality leak in an image-led flow is the distance between a beautiful generated mockup and what can actually be built from it.
-* **Image Mode (when no browser is available, or the user wants a looser pre-structural pass):** Generate five separate context-led images. Never a five-up image; never multiple samples of one prompt as separate directions.
-* **Heuristic Spec Fallback (no browser and no image generation):** Recommend one subject-led system, then mock with the worksheet wireframe. Enforce its geometry and effects contract; use concentric radii only when that system calls for nested bezels.
+* **HTML mode (required when a browser or screenshot tool is available):** Default **3** real single-file HTML variants with `bash scripts/scaffold-html.sh <name> <system> <slot>`, screenshot each, present the screenshots. Pass the **slot** (top-nav | sidebar | no-nav | scroll | spatial) so variants do not share one card-grid chrome. **The selected file is the starting build.** Do not produce 4–5 unless the brief has more than three genuinely open structural axes and you can say which.
+* **Image mode (only when no browser is available, or the user asks for a loose pre-structural pass):** Default **3** separate images. Never a collage; never multiple samples of one prompt. Caption them as **mood, not spec**. After Gate 2, rebuild the winner as HTML immediately — that rebuild is the source of truth.
+* **Heuristic spec fallback (no browser and no image generation):** Recommend one subject-led system and wireframe it in the worksheet. No fake set of five.
 
-Whichever mode: before producing anything, (1) assign each variant a distinct structural slot (top-nav / sidebar / no-nav / single-scroll / spatial-canvas) so no two share a layout skeleton, and (2) complete the Pre-Prompt Contrast Matrix so every adjacent pair differs on ≥4 axes. Hold product intent, capabilities, content, data, target devices and hard constraints constant. Unless the brief hard-fixes theme, include at least one light-canvas and two dark-canvas directions. Do not lock the system or write production code until the user selects one.
-* **Skip variant exploration** for exact implementation of an approved reference or brand-locked work where the direction is already decided. State the reason and continue through the system checkpoint. (Minor edits and isolated components are not Route A at all — they are Route B or C above; do not run Step 0 for them.)
+**Skip variant exploration** for exact implementation of an approved reference or brand-locked work. State the reason, present one recommended direction, and treat confirmation as Gate 2. Minor edits are Route B or C — do not run Step 0 for them.
 
-### 1. Interactive Briefing & Intent Check (GATED)
-Before drafting the worksheet or coding, verify the user's intent. Ask up to four clarifying questions — **skip any the user has already answered** rather than asking mechanically; a detailed brief deserves acknowledgement, not an interrogation:
-1. **Domain, audience, and job:** Who is this page for, what context do they use it in, and what is its single goal?
-2. **Content inventory:** What actually goes on this screen, in priority order, with real example values? What explicitly does *not* belong here? — *Do not skip this one.* You cannot design hierarchy without knowing what competes for it; omitting it is why generated screens end up with "Metric one / Metric two / Metric three." Record it in Worksheet §1.
-3. **Theme and constraints:** Identify hard brand, theme, accessibility, and approved-reference constraints; distinguish them from visual choices the variants may explore without locking a final design system.
-4. **Signature, density, and devices:** Propose one subject-specific signature interaction; determine whether density is fixed or explorable; confirm desktop-first, mobile-first, or fully responsive targets.
+### 1. Interactive Briefing & Intent Check (GATE 1)
+Before drafting the worksheet or producing variants, verify intent. Ask up to four questions — **skip any already answered**; a detailed brief deserves acknowledgement, not an interrogation:
+1. **Domain, audience, job, and surface:** Who is this page for, what is its single goal, and is it a **product** tool or a **marketing** page (`references/surface-types.md`)?
+2. **Content inventory:** What actually goes on this screen, in priority order, with real example values? What explicitly does *not* belong here? — *Do not skip this one.* Record it in Worksheet §1.
+3. **Theme and constraints:** Hard brand, theme, accessibility, and approved-reference constraints vs. choices variants may explore.
+4. **Signature, density, and devices:** One subject-specific signature hypothesis; whether density is fixed; desktop-first, mobile-first, or fully responsive.
 
-*Example response:* "For your inventory workspace, I’ll keep the same tasks, data, capabilities, and responsive targets in all five directions. Unless your brand fixes them, I recommend exploring different navigation, density, palette, typography, and surface models so you can compare complete product experiences. Which visual constraints must remain fixed?"
+*Example:* "For this inventory workspace I’ll hold tasks, data, capabilities, and responsive targets constant across three directions. Unless the brand fixes them, I recommend comparing different navigation and density models. Which visual constraints must stay fixed?"
 
-**Done when:** The user has confirmed/modified the subject, audience, job, hard constraints, signature hypothesis, device targets, and which visual properties are fixed versus explorable. DO NOT proceed to Step 2 without this confirmation.
+**Done when:** The user has confirmed subject, audience, job, surface (product or marketing), hard constraints, signature hypothesis, devices, and what is fixed vs explorable.
 
-### 2. Explore five visual directions (GATED when image generation is available)
-For qualifying work, read `references/variant-exploration.md` and generate exactly five separate image variants. Each candidate must use one coherent bundled or derived system, but the five candidates may use different compatible systems because the final system is not locked yet.
+> ⛔ **GATE 1** — Do not produce variants until this confirmation exists in the thread.
 
-Before writing any image prompt, complete two required pre-flight steps recorded in `templates/design-brief.md` Section 2:
-1. **Structural Slot Assignment** — assign each of A–E to one of five mutually exclusive layout skeletons (horizontal top nav / left rail sidebar / no persistent nav / single scroll surface / spatial canvas-first). No two candidates may share a slot.
-2. **Pre-Prompt Contrast Matrix** — fill the 8-axis table for A–E and verify no adjacent pair (A-B, B-C, C-D, D-E, A-E) shares more than 2 axis values. Revise before prompting if any pair fails.
+### 2. Explore three visual directions
+Read `references/variant-exploration.md` and produce the default **3** variants in the mode from Step 0. Each candidate uses exactly one bundled or derived system; the three may use different systems because the final system is not locked yet.
 
-Hold product intent, audience, job, capabilities, content, data, copy, target devices, and hard constraints constant. Unless the brief hard-fixes theme, the set must include at minimum one light-canvas and two dark-canvas directions. Select the most relevant exploration axes for the brief: navigation, screen architecture, density, theme, palette, typography, containers, geometry, elevation, emotional tone, and signature interaction. Issue five image-generation calls; do not ask one prompt for a five-up image. Reject any pair that differs mainly by data, copy, card order, icons, or a superficial color swap.
+Before producing anything, record in Worksheet §2:
+1. **Slot assignment** — pick **3 slots that fit the job** from the menu in `references/variant-exploration.md`. No two candidates share a slot. Do **not** fill all five slots. Do **not** invent a spatial canvas for a queue, table, or form.
+2. **Contrast matrix** for the three you are actually producing. Adjacent pairs for three: A-B, B-C, A-C. No pair shares more than 2 axis values.
 
-After generating, run the **Pre-Presentation Stop Gate** (four binary checks: structural silhouette, system purity, axis difference count ≥4, distinct emotional tone words). Regenerate any failing candidate before showing the set.
+Hold product intent, audience, job, capabilities, content, data, copy, devices, and hard constraints constant. Unless the brief hard-fixes theme, the set includes **at least one light-canvas and one dark-canvas** direction. Reject any pair that differs mainly by data, copy, card order, icons, or a superficial color swap.
 
-Present variants A–E at equal size. For each include a **human direction name**, a **one-line hook** (what the user will feel using this screen every day), product-fit rationale, spatial thesis, system used, key visual decisions, strength, and tradeoff. Explain why these five form a useful comparison for this specific intent. Wait for the user to select one or request a regeneration. A hybrid may transfer one clearly named element only; never blend candidates indiscriminately.
+Run the **Pre-Presentation Stop Gate** on the screenshots, not on intentions. Present the three at equal size: human direction name, one-line hook, product-fit, spatial thesis, system, key decisions, strength, tradeoff. A hybrid may transfer one clearly named element only.
 
-**Done when:** five valid, visually distinct variants are shown and the user selects one. If exploration is skipped, state why and present one recommended direction for confirmation.
+**Done when:** three valid, visually distinct variants are shown (or a skip reason + one recommended direction).
 
-> ⛔ **CHECKPOINT 2** — Record the selected variant and the user's rationale. If exploration was skipped, record the confirmed direction and skip reason instead. Wait for the user to reply "proceed" before locking the design system.
+> ⛔ **GATE 2** — Wait for the user to select one. That selection authorizes Steps 3–6. Do not wait for a second "proceed."
 
 ### 3. Lock one design system
 Lock the selected variant's ONE bundled system from `references/design-systems.md` OR its one explicitly derived system — **never mix two**. Use the subject-led selection matrix in `references/premium-direction-playbook.md`; do not select from adjectives such as "premium" alone. Open `assets/design-showcase.html` to compare all ten side by side before deciding.
@@ -87,11 +102,11 @@ Copy the complete effects contract: background, surfaces, navigation, container 
 
 **Done when:** exactly one system and its effects contract are selected and named.
 
-> ⛔ **CHECKPOINT 3** — State the chosen system and one-sentence rationale. Wait for the user to reply "proceed" before the token plan.
-
 ### 4. Token plan — fill the worksheet
-Copy `templates/design-brief.md` (the skill's canonical worksheet under `templates/`) and complete it. Use `references/token-cheatsheet.md` for the discipline behind each field. Worksheet fields:
-- **Color:** 4–6 *named* hex values (not "blue" — name them: "Ink #0B0B0F", "Mist #F5F6F8").
+Copy `templates/design-brief.md` to the project (or brief folder) and complete it on disk. Use `references/token-cheatsheet.md` for the discipline behind each field. Do **not** paste the full worksheet into the thread — post the lock summary from Rule #0.
+
+Worksheet fields:
+- **Color:** 4–6 *named* hex values (not "blue" — name them: "Paper #FFFFFF", "Forest #2F5233").
 - **Type:** 2+ roles — a characterful display face used with restraint, a complementary body face, a utility/mono face for data if needed. Pair deliberately, not Inter-by-default.
 - **Spacing:** one base unit (4px compact / 8px standard) and the steps used. **Arbitrary spacing is the single loudest amateur tell** — and the proximity law (related things closer than unrelated things) is what actually creates hierarchy.
 - **Elevation:** at most three levels, or "none — this system is flat."
@@ -101,35 +116,32 @@ Copy `templates/design-brief.md` (the skill's canonical worksheet under `templat
 - **Layout:** one-sentence concept + ASCII wireframe.
 - **Signature:** the single unique element the page is remembered by (encodes something true about the subject).
 
-**Done when:** every section of the worksheet is filled and the signature is non-generic.
+**Done when:** every section of the worksheet is filled on disk and the signature is non-generic.
 
-> ⛔ **CHECKPOINT 4** — Paste your completed `templates/design-brief.md` worksheet inline (all fields filled, ASCII wireframe included). Wait for the user to reply "proceed" before writing any code.
+### 5. Anti-slop check (before writing production code)
+Against `references/anti-slop-rules.md`: reject cream+serif+terracotta, black+acid-green, broadsheet hairlines, centered-only hero, uniform 1rem radius, Inter-by-default, `<h1>`+single-accent-CTA template — **as unchosen defaults**. If the locked system specifies one of those treatments, keep it and note the deviation. If a planned element matches a default the system does not own, replace it with a choice specific to this brief and note why.
 
-### 5. Anti-slop check (before writing code)
-Against `references/anti-slop-rules.md`: reject cream+serif+terracotta, black+acid-green, broadsheet hairlines, centered-only hero, uniform 1rem radius, Inter-by-default, `<h1>`+single-accent-CTA template. If any planned element matches a default, replace it with a choice specific to this brief and note why.
-
-**Done when:** no planned element is a flagged default; deviations are justified in writing.
-
-> ⛔ **CHECKPOINT 5** — List each anti-slop check result (PASS or deviation + justification). Only proceed to building after the user confirms the plan is good.
+**Done when:** no unchosen default remains; deviations are justified in the lock summary.
 
 ### Pre-Build Verification Checklist
-Before writing any code, confirm all of these are true:
-- [ ] Subject, audience, single job stated
-- [ ] Five variants generated and one selected, or skip reason documented
+Before writing production code, confirm all of these are true:
+- [ ] Subject, audience, single job, and surface (product or marketing) stated
+- [ ] Three variants generated and one selected, or skip reason documented
 - [ ] Exactly one design system selected
-- [ ] `templates/design-brief.md` worksheet fully completed (every field filled)
-- [ ] No anti-slop defaults present (or each deviation justified in writing)
+- [ ] Worksheet completed **on disk** (every field filled)
+- [ ] Lock summary posted (not the full worksheet)
+- [ ] No unchosen anti-slop defaults (or each deviation justified in writing)
 - [ ] Theme mode confirmed (dark-only / light-only / both with toggle)
 - [ ] Device targets confirmed (mobile 375px / tablet 768px / desktop 1280px)
 
 If any box is unchecked, go back and complete that step first.
 
 ### 6. Build — to the plan, exactly
-Scaffold with the project's existing stack (e.g., Next 16/15 + React 19/18 + Tailwind + shadcn/ui + Radix). To bootstrap a fresh project run `bash scripts/scaffold-ui.sh <name>` — it emits a Next 16 / React 19 / Tailwind / shadcn app with reduced-motion hooks and a token-CSS-variable stub. For rapid single-file prototyping, run `bash scripts/scaffold-html.sh <name> <system>` to get a system-specific HTML mockup. Implement only what the selected variant and token plan specify; derive every color/type decision from the worksheet. Watch CSS specificity collisions (`.section` vs `.cta` paddings/margins cancel).
+Scaffold with the project's existing stack (e.g., Next 16/15 + React 19/18 + Tailwind + shadcn/ui + Radix). To bootstrap a fresh project run `bash scripts/scaffold-ui.sh <name>` — it emits a Next 16 / React 19 / Tailwind / shadcn app with reduced-motion hooks and a token-CSS-variable stub. For rapid single-file prototyping, run `bash scripts/scaffold-html.sh <name> <system> <slot>` to get a system-and-slot-specific HTML mockup. Implement only what the selected variant and token plan specify; derive every color/type decision from the worksheet. Watch CSS specificity collisions (`.section` vs `.cta` paddings/margins cancel).
 
 **Build the states, not just the happy path.** Read `references/ui-states.md`. Every data region needs its empty (first-run *and* filtered), loading, error and populated states; every interactive element needs hover / focus / active / disabled / selected; every component needs to survive long text, zero and negative numbers, one item and many. Record what you built in Worksheet §6a. *"Only the populated state"* is a legitimate answer for a static visual mockup — but it must be **stated**, never silently omitted. That distinction is the difference between a picture and an interface.
 
-**If the screen has charts,** invoke the `dataviz` skill for chart type, categorical palette and axis/legend treatment instead of improvising. Dashboards are this skill's most common output and bad charts undo good layout.
+**If the screen has charts or tables of numbers,** follow `references/dataviz.md`. There is no separate dataviz skill in this repo. Dashboards are this skill's most common output; a bad chart undoes a good layout.
 
 **For public/marketing pages,** set `<title>`, `<meta name="description">`, an `og:image` and a favicon. A page that previews as a blank grey card in Slack is not finished.
 
@@ -139,7 +151,7 @@ Scaffold with the project's existing stack (e.g., Next 16/15 + React 19/18 + Tai
 **Follow `references/critique-loop.md`. This is the highest-leverage quality step in the skill; do not compress it into a sentence.**
 
 1. **Render at 375 × 812, 768 × 1024 and 1280 × 800** — `bash scripts/shoot.sh <file-or-url>`, or your own browser tool (local files need an HTTP server; `file://` breaks fonts and scripts). Render both themes if "both" was agreed.
-2. **Look at every screenshot** and score the 8-point rubric — focal point, spacing rhythm, alignment, type hierarchy, density fit, color discipline, system purity, signature. Each is PASS or a named defect with a named fix. "Looks clean and modern" is not a critique.
+2. **Look at every screenshot** and score the 8-point rubric in `references/critique-loop.md` using the named defects in `references/critique-fails.md`. Each row is `F# kebab-name — fix` or `PASS (checked F# … — why absent)`. Bare PASS / "looks clean" does not count.
 3. **Fidelity check** against the selected variant: same structure, density, palette, type, signature? Drift is either a bug to fix or a decision to say out loud — never silent.
 4. **Iterate at least twice.** Fixes create new problems; the second pass is where the design actually lands. Never ship off pass 1.
 5. Run `bash scripts/audit-ui.sh <project-dir>` and your axe-core suite if present.
@@ -167,13 +179,13 @@ Present the cohesive, on-brand, accessible UI. **If the brief said "interactive"
 5. **Ignoring accessibility** because "it's just a demo." Premium = accessible by default (focus, reduced-motion, mobile).
 6. **Premature completion** — shipping before the screenshot/critique loop.
 7. **"Compliant but generic."** Passing every anti-slop + a11y check does NOT make it premium. Ship a subject-led direction with craft signals native to that system: typography may carry an Editorial screen; color fields may carry Organics; depth may carry Warm-Sophisticate; data visualization and restrained glass may carry Dark Private-Client. Do not transplant one system's craft signals into every project. See `references/premium-direction-playbook.md`.
-8. **Five copies of one idea.** Data, copy, card order, icon, or superficial color changes are not new directions. Enforce four changed visual axes, including at least one structural axis, and run the thumbnail test.
+8. **Three copies of one idea, or five padded slots.** Data, copy, card order, icon, or a color swap are not new directions. Filling all five slots when the job only supports three is padding. Enforce four changed visual axes, including at least one structural axis, and run the thumbnail test.
 9. **Treating a single-file `*.html` mockup as unauditable.** `scripts/audit-ui.sh` includes `.html`/`.jsx` globs, so a standalone HTML file IS a valid audit target — run it; don't skip because there's no `src/` directory.
 10. **Misreading the audit's slop warnings.** Only `[FAIL]` lines block delivery; `[warn]` lines may be justified by the chosen system.
 11. **Claiming the UI works without test-driving it.** Build a real artifact, render it, look at it, and run `bash scripts/audit-ui.sh <dir>` before reporting success. Never describe a screenshot you did not take.
 12. **Shipping the happy path only.** Empty, loading, error and overflow states are most of real frontend work. Build them, or say plainly that you didn't — see `references/ui-states.md`.
 13. **Arbitrary spacing.** 13px here, 18px there. One base unit, multiples only, and related items closer than unrelated ones. This is the loudest amateur tell there is.
-14. **One critique pass.** Fixes create new problems. Two passes minimum, per `references/critique-loop.md` §4.
+14. **One critique pass, or an 8/8 of bare PASS.** Fixes create new problems — two passes minimum (`references/critique-loop.md` §4). A first pass of "looks clean" is not a critique; score from the screenshot with IDs from `references/critique-fails.md`.
 15. **Forcing a bad system fit.** If none of the ten suit the brief, derive one — a joyful product rendered in Dark Private-Client is a worse failure than any slop pattern.
 
 ## Post-Build Verification Checklist
@@ -193,7 +205,7 @@ if you could not verify one, write "not verified" rather than ticking it.
 **Manual — verify and state your evidence:**
 - [ ] 👁 UI matches the token plan exactly
 - [ ] 👁 Rendered and inspected at 375px, 768px, 1280px (not just "breakpoints exist")
-- [ ] 👁 8-point critique rubric scored, defects fixed (`references/critique-loop.md` §2)
+- [ ] 👁 8-point critique rubric scored from screenshots with `F#` / `PASS (checked …)` results (`references/critique-loop.md` §2, `references/critique-fails.md`)
 - [ ] 👁 Fidelity to the selected variant confirmed, or drift stated and justified
 - [ ] 👁 At least two critique passes run
 - [ ] 👁 UI states built or explicitly skipped (`references/ui-states.md`, Worksheet §6a)
@@ -216,22 +228,27 @@ if you could not verify one, write "not verified" rather than ticking it.
 step requires a human at the machine. Either the user runs it, or it stays unchecked.
 
 ## One-Shot Recipes
-- **Greenfield premium UI:** brief → five context-led visual directions → user selects → lock one system → fill `templates/design-brief.md` → scaffold → build → audit → screenshot critique.
-- **Redesign existing screen:** load current tokens → pick contrasting system → worksheet diff → rebuild signature only.
+- **Greenfield premium UI:** name surface → brief (Gate 1) → three HTML variants (`scaffold-html.sh` + slot) → user selects (Gate 2) → lock that system, write the worksheet to disk, post the lock summary → build → audit → screenshot critique.
+- **Redesign existing screen:** follow `references/redesign.md` — audit tokens/IA/voice, preserve unless asked, apply levers in order. Do not restyle into Dark Private-Client because it reads as premium.
 
 ## Support Files (this skill)
-- `templates/design-brief.md` — copy-and-complete worksheet for variant selection, system lock, and token planning.
-- `references/variant-exploration.md` — HTML vs image variant modes, context-led comparison contract, structural slots, approach pool, difference test, and selection gate.
+- `templates/design-brief.md` — copy-and-complete worksheet for variant selection, system lock, and token planning. Fill it on disk; post the lock summary, not the full sheet.
+- `references/surface-types.md` — product vs marketing. Name this at Gate 1; they do not share slots or signatures.
+- `references/redesign.md` — audit-first preserve/overhaul path. Not "pick a contrasting system."
+- `references/dataviz.md` — chart/table contract. Use instead of inventing donuts or a missing dataviz skill.
+- `references/eval-briefs.md` — five briefs to score the skill. Expected look vs forbidden look.
+- `references/variant-exploration.md` — HTML-required-when-possible, default-three comparison contract, slot menu (not a quota), difference test, and selection gate.
 - `references/ui-states.md` — empty / loading / error / populated, interaction states, content stress cases, form states. Read before Step 6; a happy-path-only build is a poster, not an interface.
 - `references/critique-loop.md` — render at three widths, the 8-point rubric, fidelity check, iteration. Read at Step 7; this is where quality actually comes from.
+- `references/critique-fails.md` — named defects and score format. Open it while scoring; bare PASS does not count.
 - `references/design-systems.md` — 10 bundled premium design systems with complete effects contracts. Pick exactly one.
 - `references/token-cheatsheet.md` — 60/30/10 color, role-based type, modular scale, radius/elevation, motion, contrast floor, responsive breakpoints, theme mode patterns.
 - `references/anti-slop-rules.md` — banned patterns + required a11y floor for Step 5.
 - `references/a11y-floor.md` — structural accessibility: semantic HTML, alt text, form labels, ARIA, live regions, skip links. Check before every delivery.
 - `references/performance-floor.md` — Core Web Vitals: LCP image treatment, CLS prevention, WebP/AVIF, font preloading, INP basics. Target Lighthouse ≥ 90/95.
-- `references/premium-direction-playbook.md` — subject-led direction selection, system-specific craft guidance, a Dark Private-Client recipe for qualifying briefs, and how to build a real interactive app. Read before building anything the user calls "premium / modern / sophisticated."
+- `references/premium-direction-playbook.md` — subject-led selection matrix, equal-weight craft cards (Minimal-Tech, Editorial, Organics, Dark Private-Client), and system-scoped recipes. Read before building anything the user calls "premium / modern / sophisticated." Dark glass-and-bronze is not the default.
 - `scripts/scaffold-ui.sh` — bootstrap a Next 16 / React 19 / Tailwind / shadcn project matching a standard modern stack.
-- `scripts/scaffold-html.sh` — single-file HTML mockup starter that requires an explicit system and applies only that system's effects contract. Use for quick prototypes.
+- `scripts/scaffold-html.sh` — single-file HTML mockup. Pass a system and a slot (`top-nav | sidebar | no-nav | scroll | spatial`). Slot defaults to `top-nav` if omitted; do not omit it when comparing variants.
 - `scripts/shoot.sh` — render a file or URL at 375 / 768 / 1280 and save PNGs to `output/shots/`. Serves local files over HTTP automatically. Needs Playwright; exits 3 with guidance if absent, in which case use your own browser tool.
 - `scripts/audit-ui.sh` — quality gate. FAILs on: missing reduced-motion guard, missing focus-visible, no responsive breakpoints, missing `<img alt>`, no `<main>` landmark, placeholder copy. Warns on: slop patterns, raw `100vh`, missing text-balance, missing image dimensions, TODO markers, `<h1>` count. Scans first-party source only — dependency and build directories are excluded, so a guard living in `node_modules` never counts as a pass. Does **not** check contrast, form labels, or Lighthouse; those stay manual.
 - `assets/design-showcase.html` — visual gallery of all 10 systems with hover animations; open to compare palettes/type before picking.

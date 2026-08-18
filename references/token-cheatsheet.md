@@ -165,38 +165,38 @@ Minimal-Tech is listed as either/both deliberately: its Linear/Vercel register w
 near-black *or* a near-white canvas. Pick one in Step 1 and commit — "supports both" is a
 decision to build and test two palettes, not a way to defer the choice.
 
-**If "both with toggle" is chosen**, define a `:root` block for each mode and wire a `data-theme` toggle:
+**If "both with toggle" is chosen**, define a `:root` block for each mode and wire a `data-theme` toggle. Hexes below are a light operational example — replace them with the locked system's tokens from `design-systems.md`. Do not treat bronze-on-black as the snippet to copy.
 ```css
-/* Dark (default) */
-:root, :root[data-theme="dark"] {
-  --color-bg:      #0A0B0E;
-  --color-surface: rgba(255,255,255,0.035);
-  --color-ink:     #F3F4F6;
-  --color-muted:   #7E828E;
-  --color-accent:  #C9A24B;
+/* Light (default) */
+:root, :root[data-theme="light"] {
+  --color-bg:      #ffffff;
+  --color-surface: #f7f8fa;
+  --color-ink:     #1a1f36;
+  --color-muted:   #425466;
+  --color-accent:  #2f5233;
 }
 
-/* Light override */
-:root[data-theme="light"] {
-  --color-bg:      #F4F5F7;
-  --color-surface: rgba(255,255,255,0.85);
-  --color-solid:   #FFFFFF;
-  --color-line:    rgba(0,0,0,0.08);
-  --color-ink:     #111318;
-  --color-muted:   #6B6F7A;
-  --color-accent:  #C9A24B;  /* accent stays the same — it's the brand */
+/* Dark override */
+:root[data-theme="dark"] {
+  --color-bg:      #0b0b0f;
+  --color-surface: #16161a;
+  --color-solid:   #1e1e24;
+  --color-line:    rgba(255,255,255,0.08);
+  --color-ink:     #f7f8fa;
+  --color-muted:   #8a8f98;
+  --color-accent:  #2f5233;  /* accent stays the same — it's the brand */
 }
 ```
 
 ```js
 // Theme toggle (wire to a button)
 function toggleTheme() {
-  const current = document.documentElement.dataset.theme || 'dark';
-  document.documentElement.dataset.theme = current === 'dark' ? 'light' : 'dark';
+  const current = document.documentElement.dataset.theme || 'light';
+  document.documentElement.dataset.theme = current === 'light' ? 'dark' : 'light';
   localStorage.setItem('theme', document.documentElement.dataset.theme);
 }
 // Persist across reloads
-document.documentElement.dataset.theme = localStorage.getItem('theme') || 'dark';
+document.documentElement.dataset.theme = localStorage.getItem('theme') || 'light';
 ```
 
 **Contrast check both modes separately** — a UI that passes contrast in dark often fails in light.

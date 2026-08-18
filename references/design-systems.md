@@ -1,6 +1,6 @@
 # Bundled Premium Design Systems
 
-During five-variant exploration, each candidate must use exactly one system, though different candidates may explore different compatible systems. After the user selects a candidate, lock EXACTLY ONE system for the final brief and build. Never mix two systems inside a candidate or final implementation.
+During variant exploration, each candidate must use exactly one system, though different candidates may explore different compatible systems. After the user selects a candidate, lock EXACTLY ONE system for the final brief and build. Never mix two systems inside a candidate or final implementation.
 
 ## Effects contract rule
 Every system owns its background, surfaces, navigation, containers, elevation, and motion. Apply the whole contract, not merely its colors and fonts. There are no global glass, glow, card, radius, shadow, or animation defaults. If an effect is listed as forbidden for the selected system, remove it from scaffolds and inherited components.
@@ -38,8 +38,8 @@ Every system owns its background, surfaces, navigation, containers, elevation, a
 - **Rhythm:** Near-black canvas + two radial ambient glows (warm + cool), glassy blurred cards that lift on hover, one sparing accent, real charts/sparklines/donut, subtle motion.
 - **Effects contract:** Near-black layered background; translucent glass surfaces; restrained glass navigation; concentric cards only where hierarchy benefits; soft dark elevation with subtle inset highlights; slow hover lift and chart motion.
 - **Forbidden:** Bright consumer gradients, neon accents, glass on every nested element, serif body copy, decorative gold used without a private-client rationale.
-- **Signature spatial move:** Two large `blur(80px)` radial glows pinned behind the content layer (one warm top-left, one cool bottom-right) on a near-black canvas; selected cards may use glass (`backdrop-filter: blur(8px)` + translucent surface) and lift `translateY(-4px)` on hover. Serif (Fraunces) appears ONLY on hero KPI numbers, nowhere else. See `references/premium-direction-playbook.md` for verified boilerplate.
-- **Best for:** Real estate CRM, finance, wealth, private-client, and luxury-service briefs where discretion, exclusivity, and high-value relationships are actual product qualities.
+- **Signature spatial move:** Two large `blur(80px)` radial glows pinned behind the content layer (one warm top-left, one cool bottom-right) on a near-black canvas; selected cards may use glass (`backdrop-filter: blur(8px)` + translucent surface) and lift `translateY(-4px)` on hover. Serif (Fraunces) appears ONLY on hero KPI numbers, nowhere else.
+- **Best for:** Private-client wealth and luxury relationship products where you can write one sentence on why *this* product needs discretion. Not high-volume agent CRMs, community tools, or anything that only said "premium."
 
 ## 5. Dark-Luxe (premium product / portfolio)
 - **Palette:** Void `#0A0A0B`, Graphite `#1A1A1D`, Pearl `#EDEDED`, Accent `#D4AF37` (muted gold) or `#E8C547`; Muted `#6B6B70`.

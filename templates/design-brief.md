@@ -1,4 +1,4 @@
-**⛔ REQUIRED: Fill every field below before writing any UI code. Do NOT proceed to Step 6 (Build) until this document is complete and the user has confirmed "proceed."**
+**⛔ REQUIRED: Fill every field below on disk before writing production-app code (Route A Step 6).** HTML-mode variant files in Step 2 are exploration, not a skipped worksheet. After Gate 2 (the user selects a direction), do not wait for more "proceed" messages — lock the system, complete this sheet, post the short lock summary from `SKILL.md` Rule #0, and build. Do **not** paste this entire worksheet into the thread.
 
 _Copy this worksheet, replace every `____` placeholder with a real value specific to this brief. The example values (in italics) show the format — overwrite them entirely._
 
@@ -6,7 +6,7 @@ _Copy this worksheet, replace every `____` placeholder with a real value specifi
 
 # Design Brief Worksheet
 
-## 0. Intent Alignment (Gated — complete before anything else)
+## 0. Intent Alignment (Gate 1 — confirm before producing variants)
 - **Clarifying Questions Asked to User:**
   - _e.g. "Who is this for and what is its single goal?"_
   - _e.g. "Which brand, theme, accessibility, or reference constraints must every direction respect, and which choices may vary?"_
@@ -21,11 +21,13 @@ _Copy this worksheet, replace every `____` placeholder with a real value specifi
 
 ## 1. Subject
 - **Product / subject:** ____
-  - _e.g. "Wealth management CRM for private banking advisors"_
+  - _e.g. "Ministry CRM for church administrators and care-team leads"_
 - **Audience:** ____
-  - _e.g. "Relationship managers, 30–55, power users who live in the app 8h/day"_
+  - _e.g. "Staff who open this every morning to see who needs a call"_
 - **The page's single job:** ____
-  - _e.g. "Give advisors a real-time portfolio health snapshot with 1-click into client detail"_
+  - _e.g. "Show who needs attention and move the next care action without losing context"_
+- **Surface:** ____
+  - _Product (app / queue / dashboard) or Marketing (landing / portfolio) — see `references/surface-types.md`. Not both in one brief._
 - **Theme constraint / exploration status:** ____
   - _Fixed light / Fixed dark / Must support both / Open for variant exploration_
   - _e.g. "Open for exploration — no established brand theme; each candidate must justify its choice from the usage context"_
@@ -57,9 +59,9 @@ on this screen, in priority order, with real example values.
 ## 2. Visual Variant Exploration
 
 - **Exploration mode:** ____
-  - _HTML mode (3–5 real files, preferred) / Image mode (5 generated images) / Skipped with reason_
+  - _HTML mode (default, required when a browser exists) / Image mode (mood only — rebuild winner as HTML) / Skipped with reason_
 - **Variant count and why:** ____
-  - _e.g. "3 — the brief fixes navigation, so five would pad the set"_
+  - _Default 3. 4–5 only when more than three structural axes are genuinely open — name them. Do not fill unused slots._
 - **Fixed product invariants:**
   - _Product intent, audience, job, capabilities, content, data, copy, and target devices:_ ____
 - **Hard visual constraints shared by all variants:** ____
@@ -69,17 +71,19 @@ on this screen, in priority order, with real example values.
 
 ### Structural Slot Assignment (fill before producing any variant)
 
-| Slot | Structural commitment | Variant assigned |
+Pick 3 job-fit slots. Write `unused — <reason>` in the others. Spatial canvas only if the product's primary object is a map, graph, timeline, or chart.
+
+| Slot | Structural commitment | Variant assigned (or unused — reason) |
 |---|---|---|
-| A | Horizontal top nav | ____  |
-| B | Left rail / sidebar | ____ |
-| C | No persistent nav (command / content / input-first) | ____ |
-| D | Single continuous scrolling surface | ____ |
-| E | Spatial / canvas-first (dominant visualization) | ____ |
+| Top nav | Horizontal top bar | ____  |
+| Sidebar | Left rail | ____ |
+| No persistent nav | Command / content / input-first | ____ |
+| Continuous scroll | Single scrolling surface | ____ |
+| Spatial canvas | Dominant visualization | ____ |
 
 ### Pre-Prompt Contrast Matrix (fill before producing any variant)
 
-| Axis | A | B | C | D | E |
+| Axis | A | B | C | (D) | (E) |
 |---|---|---|---|---|---|
 | Structural slot | | | | | |
 | Navigation model | | | | | |
@@ -90,12 +94,11 @@ on this screen, in priority order, with real example values.
 | Emotional tone (1 word) | | | | | |
 | Primary interaction verb | | | | | |
 
-**Adjacent-pair gate** (A-B, B-C, C-D, D-E, A-E): no pair shares the same value on more than 2 axes. ☐ PASS / ☐ REVISE
+**Adjacent-pair gate** (default three: A-B, B-C, A-C): no pair shares the same value on more than 2 axes. ☐ PASS / ☐ REVISE
 
 ### Theme Diversity Check
 - At least 1 light-canvas variant: ☐
-- At least 2 dark-canvas variants: ☐
-- At least 1 neutral/mid-tone or agent's-choice variant: ☐
+- At least 1 dark-canvas variant: ☐
 - _(or: theme hard-fixed by brief — document reason):_ ____
 
 ### Variant Comparison Table
@@ -108,7 +111,7 @@ on this screen, in priority order, with real example values.
 | D | ____ | ____ | ____ | ____ | ____ | ____ | ____ |
 | E | ____ | ____ | ____ | ____ | ____ | ____ | ____ |
 
-_Leave D and E blank if you produced three variants — state the count and why in "Variant count" above._
+_Leave D and E blank. Default is three. Only fill D/E if Variant count above names extra open structural axes._
 
 ### Pre-Presentation Stop Gate
 - **Check 1 — Structural silhouette test:** All thumbnails visually distinct at 200px ☐ PASS / ☐ REGENERATED: ____
@@ -145,19 +148,19 @@ _Leave D and E blank if you produced three variants — state the count and why 
 ### Color (4–6 named hex values — DO NOT use vague names like "blue")
 | Role | Name | Hex |
 |---|---|---|
-| Background | _e.g. Void_ | _e.g. #0A0B0E_ |
-| Surface/card | _e.g. Charcoal_ | _e.g. #141519_ |
-| Accent (one only, restrained) | _e.g. Bronze_ | _e.g. #C9A24B_ |
-| Ink/primary text | _e.g. Frost_ | _e.g. #F3F4F6_ |
-| Muted/secondary text | _e.g. Slate_ | _e.g. #7E828E_ |
-| _(optional) Semantic: good/warn/danger_ | _e.g. Jade / Amber / Rose_ | _e.g. #5BB98C / #D98B5F / #C76B7E_ |
+| Background | _e.g. Paper_ | _e.g. #FFFFFF_ |
+| Surface/card | _e.g. Mist_ | _e.g. #F7F8FA_ |
+| Accent (one only, restrained) | _e.g. Forest_ | _e.g. #2F5233_ |
+| Ink/primary text | _e.g. Ink_ | _e.g. #1A1F36_ |
+| Muted/secondary text | _e.g. Slate_ | _e.g. #425466_ |
+| _(optional) Semantic: good/warn/danger_ | _e.g. Jade / Amber / Rose_ | _e.g. #2F6F4E / #B45309 / #9B2C2C_ |
 
 ### Typography (2 roles minimum — be deliberate, not Inter-by-default)
 | Role | Font | Usage |
 |---|---|---|
-| Display | _e.g. Fraunces_ | _e.g. Hero numbers and KPI figures only_ |
-| Body | _e.g. Inter_ | _e.g. All paragraph text, labels, nav_ |
-| Mono/utility _(if data-heavy)_ | _e.g. Geist Mono_ | _e.g. Code snippets, table IDs_ |
+| Display | _e.g. Instrument Sans_ | _e.g. Page title only_ |
+| Body | _e.g. Inter_ | _e.g. Rows, labels, nav_ |
+| Mono/utility _(if data-heavy)_ | _e.g. Geist Mono_ | _e.g. IDs, timestamps_ |
 
 ### Spacing scale (pick a base unit and commit — see token-cheatsheet.md §3a)
 - **Base unit:** ____ _(4px compact / 8px standard)_
@@ -193,7 +196,7 @@ _Leave D and E blank if you produced three variants — state the count and why 
 
 ### Layout (one-sentence concept + ASCII wireframe)
 - **Concept (one sentence):** ____
-  - _e.g. "A calm care canvas organized around people and next actions, with borderless color fields separating work modes"_
+  - _e.g. "A light workbench: next-actions list leads, person context stays in a rail, no KPI card row"_
 - **Responsive behaviour (how layout changes at each breakpoint):**
   - Mobile 375px: _e.g. "Single column, sidebar collapses to bottom tab bar, bento grid stacks vertically"_
   - Tablet 768px: _e.g. "Sidebar visible but icon-only, 2-column bento"_
@@ -203,29 +206,25 @@ _Leave D and E blank if you produced three variants — state the count and why 
 [ ASCII wireframe — fill this in, don't leave it blank ]
 
 Example:
-┌─ Nav (64px) ──────────────────────────────────────┐
-│  Logo     Dashboard  Clients  Reports    [Avatar]  │
-├───────────────────────────────────────────────────┤
-│  ┌─ KPI row (3 cards, 1/3 each) ───────────────┐  │
-│  │  Revenue ▲    AUM ▲    Active Clients       │  │
-│  │  $248k        $1.2B    142                  │  │
-│  └─────────────────────────────────────────────┘  │
-│  ┌─ Chart (2/3) ────────┐  ┌─ Activity (1/3) ─┐  │
-│  │  Area chart          │  │  Feed list        │  │
-│  └──────────────────────┘  └───────────────────┘  │
-└───────────────────────────────────────────────────┘
+┌─ Sidebar ────┬─ Next actions (lead) ──────────┬─ Context ────┐
+│ Overview     │ [x] Follow up Maria Thompson   │ Maria        │
+│ People       │     Prayer request · May 18    │ Care · High  │
+│ Groups       │     Welcome James Davis        │ Last visit   │
+│ Events       │     Confirm Baptism guests     │ May 4        │
+│ Care         │     …                          │              │
+└──────────────┴────────────────────────────────┴──────────────┘
 ```
 
 ### Signature (the ONE element that makes this page memorable)
 - **What it is:** ____
-  - _e.g. "Animated radial equity allocation donut with hover-expand sector labels"_
+  - _e.g. "The selected next-action row — 3px start-edge rule, no other highlight on the page"_
 - **Why it encodes something true about the subject:** ____
-  - _e.g. "Portfolio composition IS the advisor's primary mental model — making it tactile makes the tool feel purpose-built, not generic"_
+  - _e.g. "Staff came to do the next call, not to admire five pulse cards"_
 
 ---
 
 ## 5. Anti-Slop Pre-Flight Check
-Go through every item. Mark PASS or note the deviation + justification.
+Go through every item. Mark PASS, or DEVIATION if the locked system or brief specifies that treatment (write which). Unchosen defaults are fails.
 
 | Rule | Status | Notes (if deviation) |
 |---|---|---|
@@ -244,12 +243,12 @@ Go through every item. Mark PASS or note the deviation + justification.
 ---
 
 ## 6. Build Notes
-- **Data-viz handoff:** ____ _(If this screen has charts: invoke the `dataviz` skill for chart type, palette and axis treatment rather than improvising. Note here what it produced, or "no charts".)_
+- **Data-viz handoff:** ____ _(If this screen has charts or numeric tables: follow `references/dataviz.md`. Note chart types chosen, or "no charts".)_
 - **Imagery source:** ____ _(Where do photos/illustrations come from — real assets, generated, or none? A hero with a grey box is an unfinished hero.)_
 - **Page meta (marketing/public pages):** `<title>` ____ · `<meta name="description">` ____ · `og:image` ____ · favicon ____
 - **Stack used:** ____
   - _e.g. "Next.js 15 + React 19 + Tailwind v4 + shadcn/ui, scaffolded via `bash scripts/scaffold-ui.sh <name>`"_
-  - _or: "Single-file HTML mockup via `bash scripts/scaffold-html.sh <name> <system>`"_
+  - _or: "Single-file HTML mockup via `bash scripts/scaffold-html.sh <name> <system> <slot>`"_
 - **Responsive breakpoints confirmed (mobile / tablet / desktop):** ☐
 - **Keyboard focus visible on all interactive elements:** ☐
 - **`prefers-reduced-motion` guard in place:** ☐
@@ -283,8 +282,8 @@ or **Skipped** with a reason. Silent omission is not an option.
 
 ---
 
-## 7. Post-Build Critique (see references/critique-loop.md)
-_Before marking work as done, complete this section. Rendering is mandatory._
+## 7. Post-Build Critique (see `references/critique-loop.md` + `references/critique-fails.md`)
+_Before marking work as done, complete this section. Rendering is mandatory. Score from the screenshots. Each rubric cell is `F# kebab-name — fix` or `PASS (checked F# … — why absent)`. Bare PASS does not count._
 
 ### Rendered and looked at
 - [ ] 375 × 812 — screenshot path: ____

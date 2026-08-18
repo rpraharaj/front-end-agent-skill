@@ -7,6 +7,11 @@ The single highest-leverage quality step available. `audit-ui.sh` proves the flo
 If you could not render it, say so explicitly and list what you checked instead — do not
 describe a screenshot you did not take.
 
+**Score from the screenshot, not the code.** Open `references/critique-fails.md` before you
+mark a row. Each result is `F# kebab-name — fix` or `PASS (checked F# … — why absent)`.
+Bare `PASS` and "looks clean and modern" do not count. The defect names live only in that
+file; do not invent a second catalog here.
+
 ---
 
 ## 1. Render at three widths
@@ -32,8 +37,8 @@ Also render **dark and light** if the brief said "both", and re-check contrast i
 
 ## 2. The rubric — score each render
 
-Go through all eight. For each: PASS, or name the specific defect and its fix. Vague
-self-praise ("looks clean and modern") is not a critique and does not count.
+Open every screenshot. For each row: a named defect from `critique-fails.md`, or `PASS`
+with the fail IDs you checked. Vague self-praise is not a critique and does not count.
 
 | # | Check | Fails when |
 |---|---|---|
@@ -56,7 +61,9 @@ self-praise ("looks clean and modern") is not a critique and does not count.
 
 ## 3. Fidelity check against the selected direction
 
-Put the selected variant (image or HTML) next to the build and compare:
+Put the selected **HTML** variant (or the post-Gate-2 HTML rebuild if you used image mode)
+next to the build and compare. The image is mood, not the spec — `F23` if you are still
+implementing from the picture.
 
 - **Structure** — same skeleton? A variant that promised a spatial canvas must not ship as a card grid.
 - **Density** — same rhythm?
@@ -90,9 +97,9 @@ after the design is correct, not as a substitute for critiquing it.
 ## 5. Reporting
 
 State plainly:
-- Which widths you rendered, and that you looked at each.
-- Rubric results — PASS lines can be brief; every defect gets its fix named.
-- Fidelity: matches the selected direction, or the drift and why.
+- Which widths you rendered, screenshot paths, and that you looked at each.
+- Rubric results in the `critique-fails.md` form (`F# …` or `PASS (checked …)`).
+- Fidelity: matches the selected HTML direction, or the drift and why (`F25` if silent).
 - How many passes you ran.
 - What you removed in the final cut.
 - Anything you could **not** verify.

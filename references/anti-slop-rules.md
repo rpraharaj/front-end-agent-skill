@@ -1,6 +1,6 @@
 # Anti-Slop Rules (premium UI)
 
-These patterns read as "AI-generated" regardless of subject. Avoid them unless the brief explicitly pins the look. Where the brief leaves an axis free, spend that freedom on a choice specific to THIS brief, not a default.
+These patterns read as "AI-generated" regardless of subject. They are banned as **unchosen defaults**. If the locked design system or the brief explicitly specifies one of them (Terminal CRT green, Warm-Sophisticate cream and serif, Editorial hairlines), keep it and write the deviation in the lock summary. Where the brief leaves an axis free, spend that freedom on a choice specific to THIS brief, not a default.
 
 ## Banned-by-default patterns
 1. **Cream `#F4F1EA` background + high-contrast serif display + terracotta accent.** (Default look #1.)
